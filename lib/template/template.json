@@ -1,0 +1,11 @@
+{
+  "name": "iaox-god-mode-template",
+  "version": "0.2.0",
+  "description": "God Mode skill for IAOX — persistent session mode, autonomous agent dispatch, and framework orchestration",
+  "frameworkMinVersion": "1.0.0",
+  "files": {
+    "skills": "skills/",
+    "rules": "rules/",
+    "config": "config/"
+  }
+}
