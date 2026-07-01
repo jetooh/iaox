@@ -37,19 +37,25 @@ orquestrador conduz um fluxo curto ANTES de criar qualquer coisa:
 
 ### Passo 1 — Elicitar a stack (sempre apresentar o menu)
 
-Pergunte **qual o tipo da aplicação**, apresentando este menu (o usuário escolhe
-o número ou descreve a própria stack):
+Pergunte **qual o tipo da aplicação**. As duas stacks padrão da casa são
+**Vite + React + Vitest** (web) e **Flutter** (mobile) — apresente-as primeiro:
 
-| # | Frontend Web | # | Backend / API | # | Mobile |
-|---|--------------|---|---------------|---|--------|
-| 1 | Next.js (React, App Router, TS) | 6 | NestJS (Node + TS) | 11 | React Native |
-| 2 | Vite + React (SPA, TS) | 7 | Go | 12 | Flutter |
-| 3 | Angular | 8 | Java (Spring Boot) | 13 | iOS (Swift) |
-| | **Fullstack** | 9 | .NET (C#) | 14 | Android (Kotlin) |
-| 4 | Next.js (fullstack) | 10 | PHP (Laravel) | | **Outro** |
-| 5 | Angular + NestJS | 15 | Rust | 16 | Nenhum (pasta vazia) |
+**Recomendadas (padrão)**
 
-Se o usuário já disse a stack no pedido (ex.: "cria o app loja em next"), pule o
+| # | Stack | Uso |
+|---|-------|-----|
+| 1 | **Vite + React + Vitest** (TS) | apps web — testes com Vitest |
+| 2 | **Flutter** (Dart) | apps mobile (iOS + Android) |
+
+**Outras opções**
+
+| # | Frontend / Fullstack | # | Backend / API | # | Outro |
+|---|----------------------|---|---------------|---|-------|
+| 3 | Next.js (React) | 6 | NestJS (Node + TS) | 11 | React Native |
+| 4 | Angular | 7 | Go | 12 | Nenhum (pasta vazia) |
+| 5 | Next.js (fullstack) | 8 | Java (Spring) · .NET · PHP · Rust | | |
+
+Se o usuário já disse a stack no pedido (ex.: "cria o app loja em vite"), pule o
 menu e confirme a escolha. Se a stack não estiver na lista, aceite a descrição
 livre e faça o scaffold adequado.
 
