@@ -47,8 +47,8 @@ npx github:jetooh/iaox meu-projeto --dry-run                 # simula, sem rede/
 npx github:jetooh/iaox meu-projeto --ide claude-code,cursor  # escolhe as IDEs
 ```
 
-> ⚠️ Use **`npx github:jetooh/iaox`** (código atual do repo), **não**
-> `npm install @jetooh/iaox` — esse pacote no npm ainda é o framework antigo.
+> ℹ️ A instalação é feita **direto do GitHub** (`npx github:jetooh/iaox`).
+> O pacote não é publicado no npm.
 
 ### Clonando manualmente
 
