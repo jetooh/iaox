@@ -126,6 +126,7 @@ agent definition → `aiox-architect` to design it, then write the file).
 
 | Component | Save path |
 |-----------|-----------|
+| **Feature (vertical slice)** | `docs/features/{slug}/` (SPEC, TASKS, RULES, SCORE, DECISIONS) — code in `app/{app}/`. See `references/vertical-slices.md` |
 | Agent | `.aiox-core/development/agents/{name}.md` (or `squads/{squad}/agents/`) |
 | Task | `.aiox-core/development/tasks/{name}.md` |
 | Workflow | `.aiox-core/development/workflows/{name}.md` |
@@ -163,9 +164,17 @@ agent definition → `aiox-architect` to design it, then write the file).
 | `*exit` | **Deactivate God Mode** for this session |
 
 ### Creation
+`*create-project {name}` · `*delete-project {name}` · `*create-feature {slug}`
 `*create-agent` · `*create-task` · `*create-workflow` · `*create-squad`
 `*create-checklist` · `*create-template` · `*create-rule` · `*create-data`
 `*configure {target}`
+
+> `*create-project {name}` scaffolds `app/{name}/` + isolated
+> `.claude/rules/apps/{name}/` and `.claude/memory/apps/{name}/`.
+> `*delete-project {name}` removes exactly those three folders (confirm first).
+> `*create-feature {slug}` scaffolds a vertical slice in `docs/features/{slug}/`
+> from `references/feature-templates/`. See `references/vertical-slices.md` and the
+> `app-structure.md` rule (isolation + `code in English, app in Portuguese`).
 
 ---
 
@@ -185,6 +194,7 @@ agent definition → `aiox-architect` to design it, then write the file).
 
 | File | Use for |
 |------|---------|
+| `references/vertical-slices.md` | **How to create/organize code**: feature slices, ship gate, file layout |
 | `references/agent-matrix.md` | Who owns what; routing, authority, subagent map |
 | `references/workflow-playbooks.md` | SDC, QA Loop, Spec Pipeline, Brownfield |
 | `references/agent-creation.md` | YAML schema + body for new agents |
