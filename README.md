@@ -1,8 +1,12 @@
-<h1 align="center">⚡ create-meu-iaox-god-mode</h1>
+<h1 align="center">⚡ IAOX <sub>por JETOOH</sub></h1>
 
 <p align="center">
-  <strong>Instala o framework IAOX com a sua própria skill God Mode — orquestração de agentes de IA via CLI.</strong><br>
-  <sub>Um comando: IAOX + God Mode + GSD + oh-my-claudecode + 3 MCPs.</sub>
+  <strong>Framework de orquestração de agentes de IA com a skill God Mode — um comando instala tudo.</strong><br>
+  <sub>IAOX + God Mode + GSD + oh-my-claudecode + 3 MCPs, prontos em qualquer projeto.</sub>
+</p>
+
+<p align="center">
+  <code>npx github:jetooh/iaox meu-projeto</code>
 </p>
 
 ---
