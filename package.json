@@ -1,10 +1,10 @@
 {
-  "name": "create-meu-iaox-god-mode",
-  "version": "0.1.0",
-  "description": "Bootstrap a IAOX project with your own God Mode skill — AI agent orchestration",
+  "name": "@jetooh/iaox",
+  "version": "2.0.0",
+  "description": "IAOX by JETOOH — instala o framework IAOX com a skill God Mode e orquestra agentes de IA, em um comando.",
   "type": "module",
   "bin": {
-    "create-meu-iaox-god-mode": "./bin/index.js"
+    "iaox": "./bin/index.js"
   },
   "files": [
     "bin/",
@@ -27,14 +27,25 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jetooh/iaox.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jetooh/iaox/issues"
+  },
+  "homepage": "https://github.com/jetooh/iaox#readme",
   "keywords": [
-    "create",
     "iaox",
+    "jetooh",
     "ai-agents",
     "claude-code",
     "god-mode",
     "orchestration"
   ],
-  "author": "victordeziderio",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "JETOOH",
   "license": "MIT"
 }

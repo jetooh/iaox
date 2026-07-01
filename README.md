@@ -1,4 +1,4 @@
-<h1 align="center">⚡ IAOX <sub>por JETOOH</sub></h1>
+<h1 align="center">⚡ IAOX <sub>JETOOH</sub></h1>
 
 <p align="center">
   <strong>Framework de orquestração de agentes de IA com a skill God Mode — um comando instala tudo.</strong><br>
