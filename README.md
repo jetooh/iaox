@@ -21,16 +21,38 @@
 A skill God Mode (em `lib/template/skills/iaox-god-mode/`) é **a parte que é sua** —
 edite o `SKILL.md` e as referências para moldar o comportamento do seu operador.
 
-## 🚀 Uso
+## 🚀 Instalação
+
+### A partir do GitHub (recomendado)
+
+Rode direto do repositório, sem clonar nada:
 
 ```bash
-# desenvolvimento local (sem publicar no npm)
-node bin/index.js meu-projeto
-
-# ou após publicar
-npx create-meu-iaox-god-mode meu-projeto
+npx github:jetooh/iaox meu-projeto
 cd meu-projeto
 claude        # depois digite: /iaox-god-mode
+```
+
+O `npx` baixa o repo, instala as dependências e cria a pasta `meu-projeto` já
+com o framework IAOX + a skill God Mode + MCPs + GSD + oh-my-claudecode.
+
+**Opções úteis:**
+
+```bash
+npx github:jetooh/iaox meu-projeto --dry-run                 # simula, sem rede/npm/git
+npx github:jetooh/iaox meu-projeto --ide claude-code,cursor  # escolhe as IDEs
+```
+
+> ⚠️ Use **`npx github:jetooh/iaox`** (código atual do repo), **não**
+> `npm install @jetooh/iaox` — esse pacote no npm ainda é o framework antigo.
+
+### Clonando manualmente
+
+```bash
+git clone https://github.com/jetooh/iaox.git
+cd iaox
+npm install
+node bin/index.js meu-projeto
 ```
 
 ## 🛠️ Comandos
