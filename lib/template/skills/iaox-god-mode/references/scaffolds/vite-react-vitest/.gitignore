@@ -3,3 +3,8 @@ dist/
 *.log
 playwright-report/
 test-results/
+
+# secrets — nunca commitar (só o .env.example é versionado)
+.env
+.env.*
+!.env.example

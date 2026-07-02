@@ -156,6 +156,7 @@ agent definition → `aiox-architect` to design it, then write the file).
 | `*agents` | List all agents + their subagent types |
 | `*list-apps` | Show the ecosystem's apps from `ecosystem.json` (name, stack, port, status) |
 | `*deps` | Dependency graph of the ecosystem (app → package), with cycle detection |
+| `*secrets [app]` | Check `.env` vs `.env.example` (missing keys), show masked values — never leaks secrets. See `secrets.md` |
 | `*migrate` | Bring an OLD project to the current standard — preserves rules/memories, reorganizes to the ecosystem layout. See `references/migration.md` |
 | `*workflows` | Show workflows + selection guide |
 | `*orchestrate {flow}` | Run a multi-agent workflow end to end |

@@ -75,7 +75,7 @@ describe('instalação completa (--dry-run)', () => {
 
   test('regras globais da casa instaladas', () => {
     const rulesDir = path.join(dir, '.claude', 'rules');
-    for (const r of ['vertical-slices', 'app-structure', 'tooling', 'ecosystem', 'god-mode-overview']) {
+    for (const r of ['vertical-slices', 'app-structure', 'tooling', 'ecosystem', 'secrets', 'god-mode-overview']) {
       assert.ok(fse.existsSync(path.join(rulesDir, `${r}.md`)), `regra ${r} faltando`);
     }
   });
