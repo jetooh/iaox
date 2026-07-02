@@ -3,7 +3,7 @@
   "ignore": [".claude/**", ".aiox-core/**"],
   "workspaces": {
     "app/*": {
-      "entry": ["e2e/**/*.spec.ts"],
+      "entry": ["src/env.ts", "e2e/**/*.spec.ts"],
       "project": "src/**/*.{ts,tsx}"
     },
     "packages/*": {
