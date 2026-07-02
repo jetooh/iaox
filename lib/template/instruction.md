@@ -84,6 +84,9 @@ Nunca remova regras/memórias globais nem de outros apps.
   --affected`; releases por app via Changesets (`npm run changeset`).
 - **`*doctor`:** saúde do ecossistema (registry↔disco, portas, órfãs, ciclos),
   via `@platform`.
+- **Observabilidade:** toda app em produção instrumenta as Four Golden Signals +
+  SLOs (OpenTelemetry); apps de IA monitoram evals/hallucination/custo/drift. Via
+  `@observability`. Ver a regra `observability.md`.
 - **Segredos:** `.env` na raiz (global) e `app/<app>/.env` (por app), nunca
   commitados; só os `.env.example` são versionados. `*secrets` checa o que falta
   sem vazar valores. Ver a regra `secrets.md`.
