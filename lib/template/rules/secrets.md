@@ -53,6 +53,21 @@ faltar, aborte com uma mensagem clara (recomendado: `zod` ou `envalid` num
 O `@security` procura segredos hardcoded ou commitados (padrões de chave, `.env`
 rastreado no git) como parte do ship gate. Segredo vazado = **BLOQUEADO**.
 
+## `access.md` — cofre local de acessos (para testes)
+
+Além do `.env` (runtime da app), o projeto tem um **`access.md`** na raiz: um
+caderno legível com **todos os acessos** para o orquestrador e os agentes
+**acessarem e testarem as aplicações** — URLs, logins de teste, tokens, SSH,
+strings de banco.
+
+- **NUNCA é commitado** (`access.md` no `.gitignore`); só o `access.example.md`
+  (estrutura sem valores) é versionado. O `access.md` é criado a partir dele.
+- O `@e2e` lê o `access.md` para logins de teste ao rodar fluxos autenticados; o
+  `@security` o consulta para verificar acessos e garante que ele não vazou.
+- **Nunca** exponha o conteúdo do `access.md` em prompts, logs ou commits. Ao
+  referenciar um valor, mascare. É um cofre de **desenvolvimento/teste**, não de
+  produção.
+
 ## Secret managers externos (opcional)
 
 Para produção/equipe, os `.env` podem ser preenchidos a partir de um gerenciador

@@ -83,6 +83,9 @@ Nunca remova regras/memórias globais nem de outros apps.
 - **Segredos:** `.env` na raiz (global) e `app/<app>/.env` (por app), nunca
   commitados; só os `.env.example` são versionados. `*secrets` checa o que falta
   sem vazar valores. Ver a regra `secrets.md`.
+- **Acessos (`access.md`):** cofre local com URLs, logins de teste, tokens, SSH e
+  bancos — usado pelos agentes para acessar/testar as apps. **Nunca commitado**
+  (só `access.example.md`). Ver `secrets.md`.
 
 ## 8. Tooling padrão
 

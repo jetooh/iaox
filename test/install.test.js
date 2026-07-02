@@ -61,6 +61,12 @@ describe('instalação completa (--dry-run)', () => {
     }
   });
 
+  test('cofre de acessos: access.example.md versionado (access.md é ignorado)', () => {
+    assert.ok(fse.existsSync(path.join(dir, 'access.example.md')), 'access.example.md faltando');
+    const gitignore = fse.readFileSync(path.join(dir, '.gitignore'), 'utf-8');
+    assert.match(gitignore, /^access\.md$/m, '.gitignore deve ignorar access.md');
+  });
+
   test('hook de limpeza de screenshots registrado', () => {
     assert.ok(fse.existsSync(path.join(dir, '.claude', 'iaox-clean-screenshots.cjs')));
     const settings = fse.readJsonSync(path.join(dir, '.claude', 'settings.json'));
