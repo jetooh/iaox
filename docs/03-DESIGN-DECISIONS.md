@@ -1,7 +1,9 @@
 # 03 — Decisões de Design (ADRs) + Regras de Manutenção
 
 Cada decisão registra o **contexto**, a **escolha** e o **porquê**. Datas
-absolutas (sessão de criação: 2026-06-30).
+absolutas (sessão de criação: 2026-06-30; evolução para ecossistema e rebrand
+`@jetooh/iaox`: 2026-07-01). ADR-1 a ADR-7 vêm da concepção; ADR-8 a ADR-14 são
+da evolução para orquestrador multi-app.
 
 ---
 
@@ -102,17 +104,147 @@ dry-run (é o que queremos validar).
 
 ---
 
+## ADR-8 — Rebrand para `@jetooh/iaox` v2.0.0 (só GitHub)
+
+**Contexto:** O projeto amadureceu de "instalador estilo `create-*`" para um CLI
+completo com identidade própria. O pacote é distribuído por
+`npx github:jetooh/iaox <nome>`, **não** publicado no npm.
+
+**Escolha:** Nome `@jetooh/iaox`, binário `iaox`, versão 2.0.0. `CLI_VERSION`
+lida do `package.json` (`constants.js`) — nunca dessincroniza.
+
+**Porquê:** Identidade única (JETOOH), instalação sem passo de publicação, versão
+sempre coerente com o `package.json`.
+
+**Regra:** Manter `bin` (`iaox`), `repository` e o comando de instalação do
+README coerentes. Não hard-codar versão fora do `package.json`.
+
+---
+
+## ADR-9 — Ecossistema multi-app (monorepo) por padrão
+
+**Contexto:** O usuário não quer um app isolado — quer um **orquestrador** que
+hospede várias apps que compartilham código e convenções.
+
+**Escolha:** Cada projeto nasce monorepo: workspaces (`app/*` + `packages/*`) +
+Turborepo, catálogo `ecosystem.json` (fonte da verdade de apps/packages), config
+compartilhada na raiz (`tsconfig.base.json`, `eslint.config.js` flat,
+`.prettierrc.json`), portas únicas por app e contratos em `packages/contracts`.
+Tudo vem de `lib/template/root/`, copiado com `overwrite:false`.
+
+**Porquê:** Evita duplicação entre apps, dá cache/paralelismo de tarefas e uma
+visão do todo (`*list-apps`, `*deps`). É a "Camada 1/2" do projeto.
+
+**Regra:** `ecosystem.json` e disco devem ficar em sincronia. `packages/` guarda
+o que é usado por 2+ apps. Config nunca é duplicada por app — é herdada da raiz.
+
+---
+
+## ADR-10 — Agentes da casa (`@scaffolder`, `@security`, `@e2e`, `@i18n`)
+
+**Contexto:** Os 11 agentes core do `aiox-core` cobrem o SDLC genérico, mas as
+convenções da casa (scaffold determinístico, gate de segurança, E2E+screenshots,
+idioma) precisam de donos explícitos.
+
+**Escolha:** Instalar 4 subagentes próprios em `.claude/agents/` (só claude-code).
+
+**Porquê:** Dá autoridade clara a cada convenção e permite despachá-los como
+subagentes, sem inflar a `SKILL.md`.
+
+**Regra:** Agentes da casa vivem em `lib/template/agents/`. São **framework** —
+sobrescritos no `update`, preservados no `init`.
+
+---
+
+## ADR-11 — Scaffold determinístico e versionado
+
+**Contexto:** Deixar cada app ser criada "do zero" pela IA gera inconsistência e
+projetos que não passam em testes/lint/build de fábrica.
+
+**Escolha:** As stacks padrão da casa têm scaffold **determinístico** versionado
+em `references/scaffolds/` (`vite-react-vitest`, `flutter`), com placeholders
+(`__APP_NAME__`, `__PORT__`). Outras stacks geram um scaffold mínimo idiomático.
+
+**Porquê:** App nova nasce com testes, lint e build passando; `@scaffolder`
+apenas materializa o template e substitui placeholders.
+
+**Regra:** Ao mudar um scaffold, mantê-lo com `test`/`lint`/`build` verdes e
+preservar os placeholders. Bumpar a versão da skill.
+
+---
+
+## ADR-12 — Vertical slices internalizado
+
+**Contexto:** Desenvolvimento sem rastreabilidade vira código órfão. Referência:
+`vertical-slices-md-dev-kit` de Rafael Melo.
+
+**Escolha:** Internalizar a metodologia: toda feature é
+`docs/features/<slug>/` (SPEC, TASKS, RULES, SCORE, DECISIONS), todo commit fecha
+com `Closes-AC: AC-NN`, e `Done` só com **ship gate** verde. Regra
+`vertical-slices.md` + playbook em `references/vertical-slices.md` +
+`references/feature-templates/`.
+
+**Porquê:** Cada linha de código traça de volta a um critério de aceite (reforça
+o No Invention).
+
+**Regra:** Specs/docs ficam na raiz (`docs/features/`); código vai para
+`app/<app>/`. Não escrever código que não trace a um AC.
+
+---
+
+## ADR-13 — Secrets + cofre de acessos (`access.md`)
+
+**Contexto:** Um ecossistema multi-app acumula tokens, logins de teste, SSH e
+URLs. Nada disso pode vazar para o git.
+
+**Escolha:** `.env` global + `app/<app>/.env` por app (só `.env.example`
+versionado) + `access.md` (cofre local: logins/tokens/SSH/URLs, criado de
+`access.example.md` no post-setup). `.gitignore` blinda `.env*` e `access.md`.
+`*secrets` checa chaves faltantes sem vazar valores. Regra `secrets.md`.
+
+**Porquê:** Agentes precisam acessar/testar as apps sem que segredos entrem no
+repositório.
+
+**Regra:** Nunca commitar `.env`/`access.md`. Só `*.example` são versionados.
+
+---
+
+## ADR-14 — Modo `update` preserva dados do usuário
+
+**Contexto:** Reinstalar o framework num projeto ativo não pode apagar as apps
+registradas nem a config do usuário.
+
+**Escolha:** `update` distribui skill+rules+agents+instruction **sobrescrevendo**
+o framework (`overwrite:true`), mas **preserva** dados do usuário: `ecosystem.json`
+e demais arquivos de `root/` (`overwrite:false`), `settings.json` (merge). O
+teste `install.test.js` valida isso: corrompe uma regra (restaurada) e adiciona
+uma app ao registry (preservada).
+
+**Porquê:** Atualizar o framework deve trazer as melhorias sem destruir o estado
+do projeto.
+
+**Regra:** Framework (skill, rules, agents, instruction) = sobrescreve. Dados do
+usuário (ecosystem.json, root config, settings) = preserva. Testar sempre com
+`install.test.js`.
+
+---
+
 ## Regras de manutenção / boundaries
 
 1. **Não modificar o framework** (`aiox-core`) a partir daqui — ele é instalado,
    não versionado neste repo. Respeitar as camadas L1–L4 (ver
    `lib/template/skills/iaox-god-mode/references/framework-map.md`).
 2. **Branding sempre via `constants.js`.**
-3. **Skill e referências** vivem em `lib/template/skills/iaox-god-mode/`. Versão
-   da skill em `lib/template/template.json` (`version`). Bumpar ao mudar a skill.
-4. **Idempotência:** instaladores usam `overwrite:false` para rules/instruções e
-   substituição-entre-marcadores para o bloco de persistência. Reinstalar não
-   deve duplicar nem destruir customizações do usuário.
+3. **Tudo que é instalado** vive em `lib/template/`: skill + referências
+   (`skills/iaox-god-mode/`), regras (`rules/`), agentes (`agents/`), config +
+   hook (`config/`), ecossistema (`root/`) e convenções (`instruction.md`).
+   Versão em `lib/template/template.json` (`version`, hoje `0.3.0`). Bumpar ao
+   mudar qualquer parte do template.
+4. **Idempotência / boundaries de dados:** no `init`, framework usa
+   `overwrite:false` (não sobrescreve customizações); no `update`, framework usa
+   `overwrite:true`, mas dados do usuário (`root/`, `ecosystem.json`,
+   `settings.json` via merge) são sempre preservados. O bloco de persistência é
+   substituído-entre-marcadores. Reinstalar não deve duplicar nem destruir estado.
 5. **Falhas não-críticas** (GSD, OMC, find-skills, git) **não** abortam o init —
    apenas avisam. Só falha de framework/skill aborta.
 6. **`git commit --no-verify`** no bootstrap, para hooks do framework não

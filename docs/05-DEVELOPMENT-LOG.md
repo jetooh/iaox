@@ -1,6 +1,7 @@
 # 05 — Log de Desenvolvimento
 
-Cronologia da sessão de criação. Data: **2026-06-30**.
+Cronologia. Concepção: **2026-06-30**. Evolução para orquestrador multi-app e
+rebrand: **2026-07-01**.
 
 ## Sessão 1 — Concepção e scaffold
 
@@ -58,9 +59,48 @@ Aprendizados (viraram [06-KNOWN-ISSUES.md](06-KNOWN-ISSUES.md)):
   `.cursor/mcp.json` (gemini avisa que não suporta); idempotente (re-run não
   duplica o bloco).
 
+## Sessão 5 — Rebrand `@jetooh/iaox` v2.0.0 + orquestrador multi-app (2026-07-01)
+
+Grande salto: de "instalador `create-*`" para um **CLI de orquestradores**.
+
+- **Rebrand:** pacote `@jetooh/iaox` v2.0.0, binário `iaox`, distribuído só via
+  GitHub (`npx github:jetooh/iaox <nome>`). `CLI_VERSION` passou a ler do
+  `package.json` (fonte única). Template bumpado para `0.3.0`.
+- **Vertical slices internalizado** (inspirado no `vertical-slices-md-dev-kit` de
+  Rafael Melo): regra `vertical-slices.md`, playbook em `references/`,
+  `feature-templates/` (SPEC/TASKS/RULES/SCORE/DECISIONS), ship gate e
+  `Closes-AC:`.
+- **Ecossistema (Camadas 1 e 2):** `lib/template/root/` → monorepo com workspaces
+  (`app/*`+`packages/*`) + Turborepo, `ecosystem.json` (catálogo), config
+  compartilhada (`tsconfig.base.json`, `eslint.config.js` flat, `.prettierrc.json`),
+  isolamento por app (`.claude/rules|memory/apps/<app>/`), portas únicas e
+  contratos. Regras `ecosystem.md` e `app-structure.md`.
+- **Agentes da casa:** `@scaffolder`, `@security`, `@e2e`, `@i18n` em
+  `.claude/agents/`.
+- **Scaffolds determinísticos:** `vite-react-vitest` e `flutter` em
+  `references/scaffolds/` (com placeholders `__APP_NAME__`/`__PORT__`).
+- **Tooling:** regra `tooling.md` (knip + Playwright); hook `SessionStart`
+  (`iaox-clean-screenshots.cjs` + `settings.json`) que limpa `screenshot/` a cada
+  12h.
+- **Secrets/access:** regra `secrets.md`; `.gitignore` blinda `.env*` e
+  `access.md`; post-setup cria `access.md` de `access.example.md` e a pasta
+  `screenshot/`.
+- **Convenções da casa:** `instruction.md` na raiz, referenciado via
+  `@instruction.md` no bloco de persistência do `CLAUDE.md`.
+- **Comandos novos da God Mode:** `*create-project` (menu de stack),
+  `*delete-project`, `*create-feature`, `*list-apps`, `*deps`, `*secrets`,
+  `*migrate` (via `references/migration.md`).
+- **Modo `update` reforçado:** distribui skill+rules+agents+instruction
+  sobrescrevendo o framework, mas **preservando dados do usuário**
+  (ecosystem.json, config raiz, settings).
+- **Testes de integração:** suíte `node --test` cresceu para **20 testes** em 3
+  arquivos (`unit`, `smoke`, `install`), validando agentes, scaffolds,
+  ecosystem.json, monorepo, hook, instruction, regras, access.md e o modo update.
+  CI (`.github/workflows/ci.yml`) roda lint + test + dry-run em Node 18/20/22.
+
 ## Pendências
 
 - Testar **roteamento real**: com God Mode ativo, mandar um pedido e confirmar
   que a skill **dispara** o subagente `aiox-*` (não só descreve).
-- (Opcional) Banner lê versão de `package.json` para nunca dessincronizar.
-- (Opcional) Publicar no npm e/ou ajustar `repository` em `package.json`.
+- Testar **E2E completo** do fluxo `*create-project` → app real com testes/lint
+  passando de fábrica, e `*create-feature` → ship gate.

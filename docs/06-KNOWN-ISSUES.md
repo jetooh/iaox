@@ -1,7 +1,8 @@
 # 06 — Problemas Conhecidos e Soluções
 
-Diagnosticados durante o E2E (2026-06-30). **Nenhum é bug do CLI** — exceto o
-commit, que já foi blindado.
+Diagnosticados durante o E2E (2026-06-30) e a evolução (2026-07-01). **Nenhum é
+bug do CLI** — exceto o commit, que já foi blindado. O item 4 (banner de versão)
+foi **resolvido**.
 
 ---
 
@@ -47,14 +48,15 @@ inicial.
 
 ---
 
-## 4. Banner mostra `v0.1.0`
+## 4. Banner mostrava versão hard-coded  ✅ RESOLVIDO
 
-**Status:** Não é bug. É a versão do **CLI** (`constants.js::CLI_VERSION`). A
-**skill** tem versão própria (`template.json::version`, atualmente `0.2.0`).
-São versões distintas e legítimas.
+**Status:** Corrigido. `constants.js::CLI_VERSION` agora **lê do `package.json`**
+(fonte única da verdade), então `--version` e o banner nunca dessincronizam com o
+pacote (hoje `@jetooh/iaox` v2.0.0).
 
-**Melhoria opcional:** fazer o banner ler de `package.json` para nunca
-dessincronizar com o `name`/`version` do pacote.
+**Nota:** a **skill** continua tendo versão própria e distinta
+(`template.json::version`, atualmente `0.3.0`) — são coisas diferentes: uma é o
+CLI, a outra é o template instalado.
 
 ---
 
