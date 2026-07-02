@@ -1,7 +1,8 @@
 # Agent Matrix — Routing & Authority
 
-The IAOX framework ships 11 agents (installed by `aiox-core`). This matrix is
-how God Mode decides **who** handles a request.
+The IAOX framework ships 11 core agents (installed by `aiox-core`) plus 4 house
+agents (installed by this CLI in `.claude/agents/`). This matrix is how God Mode
+decides **who** handles a request.
 
 ## Agents — dispatch map
 
@@ -21,8 +22,18 @@ To call an agent autonomously, use the Task tool with its `subagent_type`.
 | `@devops`            | Gage   | `aiox-devops`        | Git push, PRs, CI/CD, MCP management |
 | `@aiox-master`       | Orion  | _(skill, not subagent)_ | Framework governance & orchestration |
 
+### House agents (JETOOH — `.claude/agents/`)
+
+| Agent | `subagent_type` | Domain | Chamado quando |
+|-------|-----------------|--------|----------------|
+| `@scaffolder` | `scaffolder` | Gera o scaffold determinístico da stack | passo 2 do `*create-project` |
+| `@security`   | `security`   | Gate de segurança (OWASP, segredos, deps) | antes do `Done`, ou features sensíveis |
+| `@e2e`        | `e2e`        | Testes E2E + screenshots (Playwright) | validar AC visuais / bater print |
+| `@i18n`       | `i18n`       | Convenção de idioma (code EN / app PT) | telas com texto ao usuário |
+
 > If an `aiox-*` subagent isn't available, adopt the agent's persona inline by
 > reading `.aiox-core/development/agents/{name}.md` and executing as that agent.
+> The house agents live in `.claude/agents/{name}.md`.
 
 ## Exclusive authority (NON-NEGOTIABLE)
 

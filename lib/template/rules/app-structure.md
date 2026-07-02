@@ -63,8 +63,13 @@ livre e faça o scaffold adequado.
 
 Com a stack escolhida, o orquestrador cria as três pastas:
 
-1. `app/<projeto>/` — o código, com o **scaffold inicial da stack** escolhida
-   (estrutura de pastas, arquivos base, config), seguindo a convenção de idioma.
+1. `app/<projeto>/` — o código. **Dispache o `@scaffolder`** (`subagent_type:
+   scaffolder`) para gerar o scaffold de forma determinística: ele copia o
+   template da stack de
+   `.claude/skills/iaox-god-mode/references/scaffolds/<stack>/` e substitui
+   `__APP_NAME__` pelo nome do app. Stacks com template pronto:
+   **`vite-react-vitest`** e **`flutter`**. Para stacks sem template, o
+   `@scaffolder` gera um scaffold mínimo idiomático seguindo as convenções.
 2. `.claude/rules/apps/<projeto>/` — regras específicas do app (com um
    `README.md` inicial explicando o escopo e a stack).
 3. `.claude/memory/apps/<projeto>/` — memórias específicas do app.
