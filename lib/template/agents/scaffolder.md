@@ -15,7 +15,7 @@ No passo 2 do `*create-project`, depois que a stack foi escolhida.
 ## Como opera
 1. **Localize o template da stack** em
    `.claude/skills/iaox-god-mode/references/scaffolds/<stack>/`
-   (`vite-react-vitest` ou `flutter`).
+   (`vite-react-vitest`, `nextjs-react` ou `flutter`).
 2. **Copie** todo o conteúdo para `app/<projeto>/`.
 3. **Substitua os placeholders** em todos os arquivos:
    - `__APP_NAME__` → nome do app (`package.json`, `index.html`, `pubspec.yaml`…).

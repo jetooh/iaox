@@ -4,7 +4,7 @@
   "workspaces": {
     "app/*": {
       "entry": ["src/env.ts", "e2e/**/*.spec.ts"],
-      "project": "src/**/*.{ts,tsx}"
+      "project": "{src,app}/**/*.{ts,tsx}"
     },
     "packages/*": {
       "entry": ["src/index.ts"],

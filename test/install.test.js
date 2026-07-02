@@ -45,14 +45,16 @@ describe('instalação completa (--dry-run)', () => {
     assert.ok(pkg.devDependencies['@changesets/cli'], '@changesets/cli faltando');
   });
 
-  test('instala os 2 scaffolds determinísticos com placeholders', () => {
+  test('instala os 3 scaffolds determinísticos com placeholders', () => {
     const base = path.join(dir, '.claude', 'skills', 'iaox-god-mode', 'references', 'scaffolds');
     assert.ok(fse.existsSync(path.join(base, 'vite-react-vitest', 'package.json')));
+    assert.ok(fse.existsSync(path.join(base, 'nextjs-react', 'package.json')));
     assert.ok(fse.existsSync(path.join(base, 'flutter', 'pubspec.yaml')));
     const vite = fse.readFileSync(path.join(base, 'vite-react-vitest', 'vite.config.ts'), 'utf-8');
     assert.match(vite, /__PORT__/, 'scaffold vite deve ter o placeholder __PORT__');
-    const pkg = fse.readFileSync(path.join(base, 'vite-react-vitest', 'package.json'), 'utf-8');
-    assert.match(pkg, /__APP_NAME__/, 'scaffold vite deve ter o placeholder __APP_NAME__');
+    const next = fse.readFileSync(path.join(base, 'nextjs-react', 'package.json'), 'utf-8');
+    assert.match(next, /__APP_NAME__/, 'scaffold next deve ter __APP_NAME__');
+    assert.match(next, /__PORT__/, 'scaffold next deve ter __PORT__');
   });
 
   test('registry ecosystem.json válido e vazio', () => {

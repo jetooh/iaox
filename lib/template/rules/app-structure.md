@@ -68,7 +68,7 @@ Com a stack escolhida, o orquestrador cria as três pastas:
    template da stack de
    `.claude/skills/iaox-god-mode/references/scaffolds/<stack>/` e substitui
    `__APP_NAME__` pelo nome do app. Stacks com template pronto:
-   **`vite-react-vitest`** e **`flutter`**. Para stacks sem template, o
+   **`vite-react-vitest`**, **`nextjs-react`** e **`flutter`**. Para stacks sem template, o
    `@scaffolder` gera um scaffold mínimo idiomático seguindo as convenções.
 2. `.claude/rules/apps/<projeto>/` — regras específicas do app (com um
    `README.md` inicial explicando o escopo e a stack).
