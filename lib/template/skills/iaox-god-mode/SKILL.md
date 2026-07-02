@@ -156,6 +156,7 @@ agent definition → `aiox-architect` to design it, then write the file).
 | `*agents` | List all agents + their subagent types |
 | `*list-apps` | Show the ecosystem's apps from `ecosystem.json` (name, stack, port, status) |
 | `*deps` | Dependency graph of the ecosystem (app → package), with cycle detection |
+| `*migrate` | Bring an OLD project to the current standard — preserves rules/memories, reorganizes to the ecosystem layout. See `references/migration.md` |
 | `*workflows` | Show workflows + selection guide |
 | `*orchestrate {flow}` | Run a multi-agent workflow end to end |
 | `*lifecycle {story}` | Story status + next action |
@@ -197,6 +198,7 @@ agent definition → `aiox-architect` to design it, then write the file).
 | File | Use for |
 |------|---------|
 | `references/vertical-slices.md` | **How to create/organize code**: feature slices, ship gate, file layout |
+| `references/migration.md` | Migrate an old project to the current standard (`*migrate`) — safe, preserving |
 | `references/agent-matrix.md` | Who owns what; routing, authority, subagent map |
 | `references/workflow-playbooks.md` | SDC, QA Loop, Spec Pipeline, Brownfield |
 | `references/agent-creation.md` | YAML schema + body for new agents |
