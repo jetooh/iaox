@@ -56,9 +56,11 @@ describe('instalação completa (--dry-run)', () => {
   test('monorepo: workspaces + turbo + config compartilhada', () => {
     const pkg = fse.readJsonSync(path.join(dir, 'package.json'));
     assert.deepEqual(pkg.workspaces, ['app/*', 'packages/*']);
-    for (const f of ['turbo.json', 'tsconfig.base.json', 'eslint.config.js', '.prettierrc.json', 'knip.json', 'app/.gitkeep', 'packages/README.md']) {
+    for (const f of ['turbo.json', 'tsconfig.base.json', 'eslint.config.js', '.prettierrc.json', 'knip.json', 'app/.gitkeep', 'packages/README.md', '.husky/pre-commit']) {
       assert.ok(fse.existsSync(path.join(dir, f)), `${f} faltando`);
     }
+    assert.ok(pkg['lint-staged'], 'package.json deve ter config lint-staged');
+    assert.equal(pkg.scripts.prepare, 'husky', 'prepare script deve ser husky');
   });
 
   test('cofre de acessos: access.example.md versionado (access.md é ignorado)', () => {

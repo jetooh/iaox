@@ -34,11 +34,12 @@ O `.env.example` é o contrato: quem clona o projeto sabe o que preencher.
 4. **Nunca logue nem imprima** valores de segredo (nem em erro, nem em prompt).
 5. Ao mostrar status, **mascare** (`ghp_****`), nunca o valor inteiro.
 
-## Validação (falhe cedo)
+## Validação (falhe cedo) — Zod
 
-Valide na inicialização que toda chave do `.env.example` existe no `.env`. Se
-faltar, aborte com uma mensagem clara (recomendado: `zod` ou `envalid` num
-`env.ts` que centraliza o acesso tipado às variáveis).
+Valide as variáveis de ambiente na inicialização; se faltar/for inválida, aborte
+com mensagem clara. O scaffold Vite já traz **`src/env.ts` com Zod** (importado
+em `main.tsx`) que valida `import.meta.env` no boot. Acesse env pelo `env` tipado
+que ele exporta — não por `import.meta.env` espalhado pelo código.
 
 ## Comando `*secrets`
 

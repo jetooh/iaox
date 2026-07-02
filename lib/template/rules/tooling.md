@@ -3,6 +3,18 @@
 Regra auto-carregada. Define as ferramentas que cada aplicação criada dentro do
 orquestrador recebe **por padrão**, e a política de screenshots.
 
+## Pre-commit — Husky + lint-staged
+
+O monorepo tem um hook **pre-commit** (Husky) que roda **lint-staged** nos
+arquivos staged: `eslint --fix` + `prettier --write` em `.ts/.tsx`, e `prettier`
+em outros. Ativa após `npm install` na raiz (script `prepare: husky`). Garante
+que nada quebrado/mal-formatado seja commitado — sem rodar a suíte inteira.
+
+## Validação de env — Zod
+
+O scaffold Vite traz `src/env.ts` com **Zod** (importado em `main.tsx`) que valida
+`import.meta.env` no boot e falha cedo se algo estiver errado. Ver `secrets.md`.
+
 ## knip — código morto (apps JS/TS)
 
 Apps JS/TS (Vite+React+Vitest, Next.js, Angular, NestJS, React Native) são
