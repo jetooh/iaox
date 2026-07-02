@@ -17,8 +17,9 @@ No passo 2 do `*create-project`, depois que a stack foi escolhida.
    `.claude/skills/iaox-god-mode/references/scaffolds/<stack>/`
    (`vite-react-vitest` ou `flutter`).
 2. **Copie** todo o conteúdo para `app/<projeto>/`.
-3. **Substitua o placeholder `__APP_NAME__`** pelo nome do app em todos os arquivos
-   (`package.json`, `index.html`, `pubspec.yaml`, títulos, etc.).
+3. **Substitua os placeholders** em todos os arquivos:
+   - `__APP_NAME__` → nome do app (`package.json`, `index.html`, `pubspec.yaml`…).
+   - `__PORT__` → a porta única atribuída pelo `ecosystem.json` (stacks web).
 4. **Não invente estrutura** — o template é a fonte da verdade. Se a stack não tem
    template (ex.: Go, Next), gere um scaffold mínimo idiomático seguindo as mesmas
    convenções (código em inglês, UI em português, testes configurados).

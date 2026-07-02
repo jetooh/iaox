@@ -4,6 +4,8 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  // Unique port per app in the ecosystem (assigned from ecosystem.json).
+  server: { port: __PORT__ },
   test: {
     environment: 'jsdom',
     globals: true,

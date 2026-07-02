@@ -27,15 +27,19 @@ Cada app tem memórias e regras **isoladas**, em pastas com o **nome da aplicaç
 ## 3. Estrutura de pastas
 
 ```
-raiz/  (orquestrador — repositório git)
+raiz/  (orquestrador/monorepo — repositório git)
 ├── instruction.md                  # este documento
+├── ecosystem.json                  # catálogo central de apps e packages
+├── package.json + turbo.json       # workspaces + Turborepo
 ├── .claude/
 │   ├── rules/{globais}.md + apps/<app>/
-│   └── memory/{globais} + apps/<app>/
+│   ├── memory/{globais} + apps/<app>/
+│   └── agents/                     # @scaffolder, @security, @e2e, @i18n
 ├── docs/
 │   ├── PRD.md
 │   └── features/<slug>/            # specs (vertical slices) — na raiz
 ├── app/<app>/                      # o CÓDIGO de cada aplicação
+├── packages/<nome>/                # código compartilhado (@ecosystem/<nome>)
 └── screenshot/                     # prints do Playwright (limpos a cada 12h)
 ```
 
@@ -62,7 +66,18 @@ Nunca remova regras/memórias globais nem de outros apps.
 - Todo commit fecha com `Closes-AC: AC-NN` (rastreabilidade).
 - `Done` só com ship gate verde (SCORE ≥ 7 e AC verificados).
 
-## 7. Tooling padrão
+## 7. Ecossistema de várias aplicações
+
+- **Catálogo:** `ecosystem.json` na raiz lista todas as apps e packages. `*list-apps`
+  mostra a visão do todo. Mantenha registry e disco em sincronia.
+- **Monorepo:** workspaces `app/*` + `packages/*`; deps instalam na raiz; tarefas
+  via Turborepo (`npm run dev|build|test|lint`).
+- **Código compartilhado:** o que é usado por 2+ apps vai para `packages/<nome>`
+  como `@ecosystem/<nome>` — **não duplique entre apps**.
+- **Portas:** cada app web tem porta única e fixa (5173+), registrada no
+  `ecosystem.json`. Ver a regra `ecosystem.md`.
+
+## 8. Tooling padrão
 
 - **knip** por padrão em apps JS/TS — sem código/deps mortos (roda no ship gate).
 - **Playwright** por padrão em apps web — acessa a app, roda E2E e bate
@@ -70,7 +85,7 @@ Nunca remova regras/memórias globais nem de outros apps.
 - **Screenshots** vão para `screenshot/` na raiz; a pasta é **limpa a cada 12h**
   pelo hook `SessionStart`.
 
-## 8. Governança (sempre)
+## 9. Governança (sempre)
 
 - **No Invention:** toda feature traça ao `docs/PRD.md`.
 - **Delegação:** trabalho especializado vai ao agente dono (@dev, @qa, @ux…).

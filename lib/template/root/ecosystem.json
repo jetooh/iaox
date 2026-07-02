@@ -1,0 +1,7 @@
+{
+  "$schema": "./.claude/skills/iaox-god-mode/references/ecosystem.schema.json",
+  "name": "iaox-ecosystem",
+  "description": "Catálogo central das aplicações e pacotes deste ecossistema.",
+  "apps": [],
+  "packages": []
+}

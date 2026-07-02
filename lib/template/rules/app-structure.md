@@ -74,8 +74,9 @@ Com a stack escolhida, o orquestrador cria as três pastas:
    `README.md` inicial explicando o escopo e a stack).
 3. `.claude/memory/apps/<projeto>/` — memórias específicas do app.
 
-Registre a stack escolhida na primeira memória do app
-(`.claude/memory/apps/<projeto>/`) para as próximas sessões.
+Depois, **registre a app no `ecosystem.json`** (`apps[]`): nome, stack, a próxima
+porta livre (stacks web) e `status: "active"` — ver a regra `ecosystem.md`.
+Registre também a stack na primeira memória do app.
 
 ## Ciclo de vida — excluir um projeto
 
@@ -85,6 +86,8 @@ remove exatamente essas três pastas — e **somente** essas:
 - `app/<projeto>/`
 - `.claude/rules/apps/<projeto>/`
 - `.claude/memory/apps/<projeto>/`
+
+E **remova a entrada da app no `ecosystem.json`** (`apps[]`), liberando a porta.
 
 > Exclusão é destrutiva: confirme o nome do `<projeto>` com o usuário antes de
 > remover. Nunca remova regras/memórias globais nem de outros apps.
