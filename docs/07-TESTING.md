@@ -9,8 +9,8 @@ npm install
 
 ## Suíte automatizada (`npm test`)
 
-O projeto usa o runner nativo do Node (`node --test`). São **20 testes** em 3
-arquivos:
+O projeto usa o runner nativo do Node (`node --test`). São **22 testes** em 3
+arquivos (`unit` 8 · `smoke` 3 · `install` 11):
 
 ```bash
 npm test
@@ -20,7 +20,7 @@ npm test
 |---------|-------------|
 | `test/unit.test.js` | Validators (nome/diretório), tool-paths (4 IDEs, `resolveToolKey`, `supportsMcp`), constants (versão do package.json, branding `iaox`) |
 | `test/smoke.test.js` | Pipeline em `--dry-run`: gera a skill `iaox-god-mode` (claude-code e multi-IDE), falha com nome inválido |
-| `test/install.test.js` | **Integração**: valida agentes da casa, scaffolds determinísticos (com placeholders), `ecosystem.json`, monorepo (workspaces + turbo + config compartilhada), `access.md`/`.gitignore`, hook de screenshots, `instruction.md` referenciado no `CLAUDE.md`, regras da casa, e o **modo update** (sobrescreve framework, preserva dados do usuário) |
+| `test/install.test.js` | **Integração**: valida os **8 agentes da casa**, scaffolds determinísticos (com placeholders), `ecosystem.json`, monorepo (workspaces + turbo + config compartilhada), `access.md`/`.gitignore`, hook de screenshots, `instruction.md` referenciado no `CLAUDE.md`, as **10 regras** da casa, o **sistema de memória** (`.claude/memory/MEMORY.md` + `apps/`), os **docs isolados** (`docs/apps/`, `docs/features/`, `docs/stories/`), **secrets/access**, e o **modo update** (sobrescreve framework, preserva dados do usuário) |
 
 ## Smoke-tests manuais (rápidos, sem efeitos)
 
@@ -54,17 +54,24 @@ done
 for f in ecosystem.json package.json turbo.json tsconfig.base.json eslint.config.js instruction.md access.example.md; do
   echo -n "$f: "; [ -f "$D/$f" ] && echo OK || echo FALTA
 done
-# agentes da casa + regras + hook
+# agentes da casa + regras + hook + memória + docs
 ls "$D/.claude/agents/" "$D/.claude/rules/" "$D/.claude/iaox-clean-screenshots.cjs"
+ls "$D/.claude/memory/MEMORY.md" "$D/docs/apps/"
+# tooling da Camada 3 na raiz
+ls "$D/.husky/pre-commit" "$D/.changeset/config.json" "$D/knip.json" \
+   "$D/.github/workflows/ecosystem-ci.yml"
 # bloco de persistência
 for f in CLAUDE.md AGENTS.md GEMINI.md; do
   echo -n "$f: "; grep -c "IAOX-GOD-MODE:START" "$D/$f" 2>/dev/null || echo 0
 done
 ```
 
-Esperado: skill nas IDEs com `skills`; ecossistema+config na raiz; 4 agentes
-(`scaffolder`, `security`, `e2e`, `i18n`) e as 6 regras da casa em `.claude/`; o
-hook `.cjs`; bloco de persistência = 1 em cada arquivo de instrução.
+Esperado: skill nas IDEs com `skills`; ecossistema+config na raiz (incl.
+`knip.json`, `.husky/`, `.changeset/`, `ecosystem-ci.yml`); **8 agentes**
+(`scaffolder`, `security`, `e2e`, `i18n`, `platform`, `observability`, `finops`,
+`a11y`) e as **10 regras** da casa em `.claude/`; o índice `.claude/memory/
+MEMORY.md` e `docs/apps/`; o hook `.cjs`; bloco de persistência = 1 em cada
+arquivo de instrução.
 
 **Idempotência:** rodar o dry-run 2x na mesma pasta NÃO deve duplicar o bloco
 (`grep -c` continua 1) e deve avisar que vai sobrescrever.

@@ -55,6 +55,7 @@ argument-hint: [command | natural-language request]
 | `*agents` | Lista agentes + seus `subagent_type` |
 | `*list-apps` | Apps do ecossistema a partir de `ecosystem.json` (nome, stack, porta, status) |
 | `*deps` | Grafo de dependências do ecossistema (app → package) + detecção de ciclos |
+| `*doctor` | Saúde do ecossistema (registry↔disco, portas, órfãs, ciclos) via `@platform` |
 | `*secrets [app]` | Checa `.env` vs `.env.example` (chaves faltantes), valores mascarados |
 | `*migrate` | Traz um projeto ANTIGO para o padrão atual, preservando rules/memórias |
 | `*workflows` · `*orchestrate` · `*lifecycle` · `*matrix` · `*constitution` · `*diagnose` · `*sprint` | Operação de framework |
@@ -90,15 +91,19 @@ argument-hint: [command | natural-language request]
 ## Agentes
 
 **11 agentes core** (do `aiox-core`), despachados via `subagent_type` (ver
-[01-MEMORY.md](01-MEMORY.md)). Além deles, **4 agentes da casa** instalados em
-`.claude/agents/`:
+[01-MEMORY.md](01-MEMORY.md)). Além deles, **8 agentes da casa** instalados em
+`.claude/agents/` (só claude-code), catalogados em `references/agent-matrix.md`:
 
 | Agente | Papel |
 |--------|-------|
-| `@scaffolder` | gera o scaffold determinístico da stack |
+| `@scaffolder` | gera o scaffold determinístico da stack (por-app) |
 | `@security` | gate de segurança (OWASP, segredos, deps) |
 | `@e2e` | testes E2E + screenshots (Playwright) |
 | `@i18n` | convenção de idioma (code EN / app PT) |
+| `@platform` | guardião macro do ecossistema (grafo, contratos, releases Changesets, `*doctor`) |
+| `@observability` | SRE + LLM observability (Golden Signals, SLO, OpenTelemetry, evals/hallucination/token-cost/drift, incidentes) |
+| `@finops` | custo cloud + IA (model routing, caching, prompt compression, budget, custo por feature) |
+| `@a11y` | acessibilidade WCAG 2.2 AA (teclado, semântica, contraste, axe-core) |
 
 ## Fluxo de operação (autônomo)
 

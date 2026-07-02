@@ -19,8 +19,10 @@ CLI. Versionado junto com o código para preservar o contexto de criação.
 
 `@jetooh/iaox` é um CLI instalador que, em um comando, cria um **orquestrador**
 (um monorepo/ecossistema multi-app) já configurado com a skill **God Mode**, as
-regras da casa, os agentes, os scaffolds e o tooling — pronto para conversar em
-linguagem natural e ver apps, features e código nascerem seguindo as convenções.
+10 regras da casa, os 8 agentes (incl. produção — observability/finops/a11y —,
+`@platform` e Camada 3), os scaffolds, o tooling (Husky/Zod/Changesets/knip) e o
+sistema de memória — pronto para conversar em linguagem natural e ver apps,
+features e código nascerem seguindo as convenções.
 
 ## Origem
 

@@ -88,8 +88,20 @@ UI/mensagens/i18n em pt-BR.
 
 ### Isolamento por aplicação
 
-Cada app tem regras e memórias próprias, separadas:
-`.claude/rules/apps/<app>/` e `.claude/memory/apps/<app>/`.
+Cada camada é **global no orquestrador** ou **isolada por app** (pasta com o nome
+da app):
+
+| Camada | De uma app | Global (orquestrador) |
+|--------|-----------|------------------------|
+| Regras | `.claude/rules/apps/<app>/` | `.claude/rules/*.md` |
+| Memória | `.claude/memory/apps/<app>/` | `.claude/memory/` |
+| Features / Stories | `docs/apps/<app>/` | `docs/features/` · `docs/stories/` |
+
+### Memória do orquestrador
+
+Fatos e decisões persistem entre sessões em `.claude/memory/` (versionada,
+compartilhada com o time), com índice `MEMORY.md` carregado toda sessão via
+`@.claude/memory/MEMORY.md`. Diferente da memória pessoal do seu Claude Code.
 
 ### Tooling por padrão
 
@@ -109,10 +121,12 @@ meu-orquestrador/  (monorepo — git)
 ├── .changeset/ · .husky/ · .github/workflows/   # release, pre-commit, CI
 ├── .claude/                    # config + cérebro (na raiz)
 │   ├── rules/{globais}.md + apps/<app>/   # regras (global + por app)
-│   ├── memory/{globais} + apps/<app>/     # memória (global + por app)
+│   ├── memory/MEMORY.md + apps/<app>/     # memória (índice global + por app)
 │   ├── agents/                 # 8 agentes da casa
 │   └── skills/iaox-god-mode/
-├── docs/features/<slug>/       # specs (vertical slices)
+├── docs/                       # docs do orquestrador (global/cross-app)
+│   ├── PRD.md · architecture/ · stories/ · features/<slug>/
+│   └── apps/<app>/{features,stories}/     # docs e stories de cada app
 ├── app/<app>/                  # o código de cada aplicação
 ├── packages/<nome>/            # código compartilhado (@ecosystem/<nome>)
 └── screenshot/                 # prints do Playwright (limpos a cada 12h)

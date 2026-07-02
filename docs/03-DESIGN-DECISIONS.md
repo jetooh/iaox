@@ -2,8 +2,10 @@
 
 Cada decisão registra o **contexto**, a **escolha** e o **porquê**. Datas
 absolutas (sessão de criação: 2026-06-30; evolução para ecossistema e rebrand
-`@jetooh/iaox`: 2026-07-01). ADR-1 a ADR-7 vêm da concepção; ADR-8 a ADR-14 são
-da evolução para orquestrador multi-app.
+`@jetooh/iaox`: 2026-07-01; Camada 3, agentes de produção, memória e isolamento
+de docs: 2026-07-02). ADR-1 a ADR-7 vêm da concepção; ADR-8 a ADR-14 são da
+evolução para orquestrador multi-app; ADR-15 a ADR-20 são da maturação
+(Camada 3, agentes de produção, tooling, memória, isolamento).
 
 ---
 
@@ -224,8 +226,129 @@ uma app ao registry (preservada).
 do projeto.
 
 **Regra:** Framework (skill, rules, agents, instruction) = sobrescreve. Dados do
-usuário (ecosystem.json, root config, settings) = preserva. Testar sempre com
-`install.test.js`.
+usuário (ecosystem.json, root config, settings, memória) = preserva. Testar
+sempre com `install.test.js`.
+
+---
+
+## ADR-15 — Camada 3 do ecossistema (CI "affected" + release por app + `*doctor`)
+
+**Contexto:** Camadas 1/2 deram monorepo, catálogo e config compartilhada. Faltava
+a operação em escala: CI que não recompila o mundo, versionamento independente por
+app e um diagnóstico único da saúde do ecossistema.
+
+**Escolha:** Instalar em `lib/template/root/`: `.github/workflows/ecosystem-ci.yml`
+(`turbo run test build --affected` com `fetch-depth:0`, roda só o que mudou),
+`.changeset/config.json` (release/changelog por app via Changesets), e o comando
+`*doctor` (registry↔disco, portas, órfãs, ciclos) operado pelo agente `@platform`.
+
+**Porquê:** Ecossistema com N apps precisa de CI barato (affected), releases que não
+acoplam versões e uma visão de saúde acionável. Fecha a operação cross-app.
+
+**Regra:** CI usa `--affected` (nunca recompilar tudo). Cada app versiona sozinha
+(Changesets). `*doctor` reporta por severidade e propõe correções sem aplicá-las
+sem confirmação.
+
+---
+
+## ADR-16 — Agentes de produção (`@observability`, `@finops`, `@a11y`)
+
+**Contexto:** Os agentes cobriam pré-deploy (`@qa`, `@security`, `@e2e`). Faltavam
+donos para o que acontece **em produção** e para exigências de 2026 — vindo de
+análise de mercado: observabilidade (SRE + IA), custo (cloud + tokens de IA) e
+acessibilidade legal (European Accessibility Act, ADA).
+
+**Escolha:** Três agentes novos, mais o `@platform` (guardião macro): totalizando
+**8 agentes da casa**. `@observability` (Four Golden Signals, SLO, OpenTelemetry,
+LLM observability — evals/hallucination/token-cost/drift, incidentes). `@finops`
+(model routing, caching, prompt compression, budget, custo por feature). `@a11y`
+(WCAG 2.2 AA, teclado/semântica/contraste, axe-core no E2E). Cada um com regra
+correspondente em `lib/template/rules/`.
+
+**Porquê:** Fechar o ciclo dev → produção e endereçar as três alavancas de valor de
+2026 (confiabilidade, custo de IA, acessibilidade) com autoridade explícita.
+
+**Regra:** Instrumentação/análise/auditoria são desses agentes; provisionar infra
+remota e billing continuam do `@devops`. Agentes de produção são framework
+(sobrescritos no `update`).
+
+---
+
+## ADR-17 — Husky + lint-staged, Zod e Changesets
+
+**Contexto:** O tooling precisava de garantias determinísticas: nada mal-formatado
+commitado, env validado no boot, releases versionados.
+
+**Escolha:** **Husky + lint-staged** (`.husky/pre-commit` → `npx lint-staged`;
+`eslint --fix` + `prettier` nos staged; ativa via `prepare: husky`). **Zod** no
+scaffold Vite (`src/env.ts` valida `import.meta.env` no boot, falha cedo).
+**Changesets** para release por app. ESLint flat real + Prettier + `knip.json`
+compartilhados na raiz.
+
+**Porquê:** Pre-commit barato (só staged, não a suíte inteira), env sem surpresas,
+release disciplinado. Baixo custo, alto retorno de qualidade.
+
+**Regra:** Config compartilhada mora na raiz, não por app. Pre-commit formata só
+staged. Env sempre validado por Zod nas apps que usam `import.meta.env`.
+
+---
+
+## ADR-18 — Sistema de memória do orquestrador
+
+**Contexto:** O orquestrador precisa **lembrar** decisões e contexto entre sessões,
+de forma **versionada e compartilhada com o time** — diferente da memória pessoal
+do Claude Code (que não vai para o repo).
+
+**Escolha:** `.claude/memory/` (global) + `.claude/memory/apps/<app>/` (por app),
+cada pasta com um `MEMORY.md` índice. Cada memória é um `.md` com frontmatter
+tipado (`type: project|decision|reference|feedback`). O índice global é carregado
+toda sessão via `@.claude/memory/MEMORY.md` no `CLAUDE.md`. Regra `memory.md`;
+post-setup cria o índice global e a pasta `apps/`.
+
+**Porquê:** Compounding de conhecimento no repositório; decisões e seu porquê ficam
+disponíveis a qualquer sessão e a todo o time, sem duplicar o que código/git já
+dizem.
+
+**Regra:** Registrar só o que persiste e não é óbvio do código. Fato do ecossistema
+→ memória global; fato de app → `apps/<app>/`. Atualizar em vez de duplicar. Ciclo
+de vida integrado ao `*create-project`/`*delete-project`.
+
+---
+
+## ADR-19 — Isolamento estendido a `docs/` (features e stories por app)
+
+**Contexto:** Rules e memória já eram isoladas por app (`apps/<app>/`). As features
+(vertical slices) e stories precisavam do mesmo isolamento para não misturar o
+trabalho de apps distintas.
+
+**Escolha:** Features/stories de uma app vivem em `docs/apps/<app>/features/<slug>/`
+e `docs/apps/<app>/stories/`; as globais do orquestrador em `docs/features/` e
+`docs/stories/`. Mesmo padrão de rules/memória (por-app vs global). Post-setup cria
+`docs/features/`, `docs/stories/` e `docs/apps/`.
+
+**Porquê:** Consistência total do isolamento (rules ↔ memória ↔ docs), mantendo a
+visão global do orquestrador separada do trabalho de cada app.
+
+**Regra:** Feature/story de app → `docs/apps/<app>/`; do orquestrador → raiz de
+`docs/`. Código continua em `app/<app>/`.
+
+---
+
+## ADR-20 — knip configurado na raiz do monorepo
+
+**Contexto:** knip rodado por-workspace falhava — as devDeps do monorepo ficam
+*hoisted* na raiz, então o workspace não as "vê".
+
+**Escolha:** Uma única config `root/knip.json` que declara os workspaces
+(`app/*`, `packages/*`) e ignora arquivos de framework (`.claude/`, `.aiox-core/`).
+Rodar sempre da raiz: `npm run knip` (analisa o monorepo inteiro). Fix relacionado:
+o scaffold Playwright usa `import.meta.url` (ESM), não `__dirname`.
+
+**Porquê:** knip só funciona vendo o grafo completo com as deps hoisted; a raiz é o
+único ponto que as enxerga.
+
+**Regra:** knip é config-da-raiz, nunca por app. Stacks não-JS/TS usam o analisador
+nativo da linguagem (`flutter analyze`, `go vet`).
 
 ---
 
@@ -236,10 +359,10 @@ usuário (ecosystem.json, root config, settings) = preserva. Testar sempre com
    `lib/template/skills/iaox-god-mode/references/framework-map.md`).
 2. **Branding sempre via `constants.js`.**
 3. **Tudo que é instalado** vive em `lib/template/`: skill + referências
-   (`skills/iaox-god-mode/`), regras (`rules/`), agentes (`agents/`), config +
-   hook (`config/`), ecossistema (`root/`) e convenções (`instruction.md`).
-   Versão em `lib/template/template.json` (`version`, hoje `0.3.0`). Bumpar ao
-   mudar qualquer parte do template.
+   (`skills/iaox-god-mode/`), 10 regras (`rules/`), 8 agentes (`agents/`), config +
+   hook (`config/`), ecossistema (`root/`, incl. Husky/Changesets/CI/knip) e
+   convenções (`instruction.md`). Versão em `lib/template/template.json`
+   (`version`, hoje `0.3.0`). Bumpar ao mudar qualquer parte do template.
 4. **Idempotência / boundaries de dados:** no `init`, framework usa
    `overwrite:false` (não sobrescreve customizações); no `update`, framework usa
    `overwrite:true`, mas dados do usuário (`root/`, `ecosystem.json`,

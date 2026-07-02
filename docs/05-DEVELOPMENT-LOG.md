@@ -1,7 +1,8 @@
 # 05 — Log de Desenvolvimento
 
 Cronologia. Concepção: **2026-06-30**. Evolução para orquestrador multi-app e
-rebrand: **2026-07-01**.
+rebrand: **2026-07-01**. Camada 3, agentes de produção, memória e isolamento:
+**2026-07-02**.
 
 ## Sessão 1 — Concepção e scaffold
 
@@ -97,6 +98,41 @@ Grande salto: de "instalador `create-*`" para um **CLI de orquestradores**.
   arquivos (`unit`, `smoke`, `install`), validando agentes, scaffolds,
   ecosystem.json, monorepo, hook, instruction, regras, access.md e o modo update.
   CI (`.github/workflows/ci.yml`) roda lint + test + dry-run em Node 18/20/22.
+
+## Sessão 6 — Camada 3, agentes de produção, memória e isolamento (2026-07-02)
+
+Maturação do orquestrador (8 commits). Template continua `0.3.0`.
+
+- **Tooling novo:** **Husky + lint-staged** (`.husky/pre-commit` → `npx
+  lint-staged`; `eslint --fix` + `prettier` nos staged; `prepare: husky`).
+  **Zod** no scaffold Vite (`src/env.ts` valida `import.meta.env` no boot).
+  **Changesets** (`.changeset/config.json` + scripts `changeset`/
+  `version-packages`). ESLint flat real + Prettier + `knip.json` na raiz.
+- **Camada 3 do ecossistema:** CI "affected"
+  (`.github/workflows/ecosystem-ci.yml` → `turbo run test build --affected`),
+  release por app (Changesets), comando `*doctor` (registry↔disco, portas,
+  órfãs, ciclos) e o agente `@platform` (guardião macro).
+- **Agentes de produção** (de análise de mercado 2026): `@observability` (SRE +
+  LLM observability — Golden Signals, SLO, OpenTelemetry, evals/hallucination/
+  token-cost/drift, incidentes), `@finops` (custo cloud+IA — model routing,
+  caching, prompt compression, budget), `@a11y` (WCAG 2.2 AA, axe). Agora são
+  **8 agentes da casa** e **10 regras** (`+ observability`, `finops`, `a11y`,
+  `memory`).
+- **Sistema de memória do orquestrador** (`.claude/memory/`, regra `memory.md`):
+  memória versionada e compartilhada com o time — global + `apps/<app>/` por
+  app, índice `MEMORY.md`, frontmatter tipado (project/decision/reference/
+  feedback), carregada via `@.claude/memory/MEMORY.md` no `CLAUDE.md`. Distinta
+  da memória pessoal do Claude Code.
+- **Isolamento estendido a docs/stories:** features de app em
+  `docs/apps/<app>/features/<slug>/`, stories em `docs/apps/<app>/stories/`;
+  globais do orquestrador em `docs/features/` e `docs/stories/`. Post-setup cria
+  as pastas base e o índice de memória.
+- **Fixes:** knip agora roda **da raiz** do monorepo (config `root/knip.json`;
+  devDeps hoisted) — rodar por-workspace falhava; scaffold Playwright usa
+  `import.meta.url` em vez de `__dirname` (é ESM).
+- **Testes:** suíte cresceu para **22 testes** (`install.test.js` cobre os
+  agentes, scaffolds, ecossistema, monorepo, hook, **memória**, **docs/apps**,
+  **secrets/access** e o modo update).
 
 ## Pendências
 

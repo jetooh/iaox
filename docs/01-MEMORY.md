@@ -52,16 +52,32 @@ etapas delegam para `aiox-core`, GSD e oh-my-claudecode. Ver
 
 - **Skill** `iaox-god-mode` (SKILL.md + referências + feature-templates +
   scaffolds) em cada IDE selecionada.
-- **Regras da casa** (`.claude/rules/`): `god-mode-overview`, `vertical-slices`,
-  `app-structure`, `tooling`, `ecosystem`, `secrets`.
-- **Agentes da casa** (`.claude/agents/`): `scaffolder`, `security`, `e2e`, `i18n`.
+- **Regras da casa** (`.claude/rules/`) — **10 regras**: `god-mode-overview`,
+  `vertical-slices`, `app-structure`, `tooling`, `ecosystem`, `secrets`,
+  `observability`, `finops`, `a11y`, `memory`.
+- **Agentes da casa** (`.claude/agents/`) — **8 agentes**: `scaffolder`,
+  `security`, `e2e`, `i18n`, `platform` (guardião macro do ecossistema),
+  `observability` (SRE + LLM observability), `finops` (custo cloud+IA), `a11y`
+  (acessibilidade WCAG 2.2 AA).
 - **Ecossistema/monorepo** (na raiz, de `lib/template/root/`): `ecosystem.json`,
-  `package.json` (workspaces `app/*`+`packages/*`), `turbo.json`,
-  `tsconfig.base.json`, `eslint.config.js` (flat), `.prettierrc.json`,
-  `packages/README.md`, `app/.gitkeep`, `access.example.md`.
+  `package.json` (workspaces `app/*`+`packages/*`, scripts turbo/knip/changeset,
+  `prepare: husky`, config lint-staged), `turbo.json`, `tsconfig.base.json`,
+  `eslint.config.js` (flat real), `.prettierrc.json`, `knip.json` (config
+  compartilhada da raiz), `packages/README.md`, `app/.gitkeep`,
+  `access.example.md`.
+- **Camada 3** do ecossistema: `.github/workflows/ecosystem-ci.yml` (CI
+  "affected" — `turbo run test build --affected`), `.changeset/config.json`
+  (release por app via Changesets), `.husky/pre-commit` (roda `lint-staged`).
 - **Convenções** (`instruction.md` na raiz, referenciado via `@instruction.md`).
-- **Tooling**: hook `SessionStart` que limpa `screenshot/` a cada 12h
-  (`iaox-clean-screenshots.cjs` + `settings.json`).
+- **Tooling**: Husky + lint-staged (pre-commit auto-formata staged), Zod
+  (scaffold Vite valida `import.meta.env` no boot via `src/env.ts`), Changesets,
+  knip rodado da raiz do monorepo; hook `SessionStart` que limpa `screenshot/` a
+  cada 12h (`iaox-clean-screenshots.cjs` + `settings.json`).
+- **Memória do orquestrador** (`.claude/memory/`): índice `MEMORY.md` global +
+  `apps/<app>/` por app — memória versionada e compartilhada com o time
+  (distinta da memória pessoal do Claude Code). Regra `memory.md`.
+- **Docs isolados por app**: `docs/apps/<app>/features/` e
+  `docs/apps/<app>/stories/`; globais em `docs/features/` e `docs/stories/`.
 - **Secrets**: `.gitignore` blinda `.env`/`access.md`; `access.md` criado de
   `access.example.md` (cofre local, ignorado pelo git).
 
@@ -93,20 +109,25 @@ compactação de contexto):
 | Push/PR/CI/MCP | @devops (Gage) | `aiox-devops` |
 | Governança | @aiox-master (Orion) | _(skill, não subagente)_ |
 
-Além dos 11 agentes core, o projeto instala **4 agentes da casa**
-(`@scaffolder`, `@security`, `@e2e`, `@i18n`).
+Além dos 11 agentes core, o projeto instala **8 agentes da casa**
+(`@scaffolder`, `@security`, `@e2e`, `@i18n`, `@platform`, `@observability`,
+`@finops`, `@a11y`).
 
 ## Estado atual
 
 - **Rebrand para `@jetooh/iaox` v2.0.0** concluído (2026-07-01). Template v0.3.0.
-- **Ecossistema Camadas 1 e 2** implementado: monorepo, `ecosystem.json`,
-  config compartilhada, isolamento por app, vertical slices, scaffolds
-  determinísticos (`vite-react-vitest`, `flutter`), agentes da casa, tooling
-  (knip/Playwright/screenshots) e secrets/access.
+- **Ecossistema Camadas 1, 2 e 3** implementado: monorepo, `ecosystem.json`,
+  config compartilhada, isolamento por app (rules/memory/docs), vertical slices,
+  scaffolds determinísticos (`vite-react-vitest`, `flutter`), 8 agentes da casa,
+  tooling (Husky+lint-staged, Zod, Changesets, knip/Playwright/screenshots),
+  CI "affected", release por app e secrets/access.
+- **Sistema de memória do orquestrador** (`.claude/memory/`, regra `memory.md`):
+  versionado e compartilhado, global + por app, com índice `MEMORY.md` e
+  frontmatter tipado (project/decision/reference/feedback).
 - **Modo `update`** distribui skill+rules+agents+instruction sobrescrevendo o
   framework mas **preservando dados do usuário** (ecosystem.json, config raiz,
-  settings).
-- **Testes de integração**: 20 testes em 3 arquivos (`unit`, `smoke`, `install`),
+  settings, memória).
+- **Testes de integração**: 22 testes em 3 arquivos (`unit`, `smoke`, `install`),
   todos verdes. CI em Node 18/20/22. Ver [07-TESTING.md](07-TESTING.md).
 
 ## Fatos importantes do ambiente

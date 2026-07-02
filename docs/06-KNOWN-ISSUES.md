@@ -68,3 +68,18 @@ CLI, a outra é o template instalado.
 pasta de destino aninha.
 
 **Solução:** rodar a partir do diretório pai (ver item 1).
+
+---
+
+## 6. Scaffold Flutter não validado em runtime
+
+**Status:** conhecido, não é bug do CLI.
+
+**Contexto:** o scaffold `references/scaffolds/flutter/` (pubspec, `lib/main.dart`,
+`test/widget_test.dart`, `analysis_options.yaml`) é **determinístico e versionado**,
+mas ainda **não foi exercido com o SDK Flutter instalado** (`flutter pub get`,
+`flutter test`, `flutter analyze`). O scaffold `vite-react-vitest` foi validado; o
+Flutter permanece "confiável por construção", pendente de um E2E real com o SDK.
+
+**Nota:** knip não cobre stacks não-JS/TS — Flutter usa `flutter analyze` (ver
+`tooling.md`).
