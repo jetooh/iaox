@@ -76,6 +76,10 @@ Nunca remova regras/memórias globais nem de outros apps.
   como `@ecosystem/<nome>` — **não duplique entre apps**.
 - **Portas:** cada app web tem porta única e fixa (5173+), registrada no
   `ecosystem.json`. Ver a regra `ecosystem.md`.
+- **Config compartilhada:** `tsconfig.base.json`, `eslint.config.js` e
+  `.prettierrc.json` na raiz — herdados por todas as apps (não duplique config).
+- **Contratos:** tipos entre apps em `packages/contracts` (`@ecosystem/contracts`).
+- **`*deps`:** grafo de dependências do ecossistema, com detecção de ciclos.
 
 ## 8. Tooling padrão
 

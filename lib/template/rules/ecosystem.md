@@ -54,3 +54,37 @@ ecossistema. Toda app e todo package compartilhado estão registrados lá:
   "active"`.
 - **`*delete-project`**: **remove a app do `ecosystem.json`** junto com as pastas.
 - Manter o registry atualizado é obrigatório — é o que dá a visão do ecossistema.
+
+## 6. Config compartilhada (padronização)
+
+Configuração vive **uma vez na raiz** e é herdada por todas as apps/packages:
+
+- **TypeScript:** `tsconfig.base.json` na raiz; cada app faz
+  `"extends": "../../tsconfig.base.json"` e só declara overrides (lib, jsx, types).
+- **ESLint:** `eslint.config.js` (flat) na raiz cobre todo o monorepo. `npm run
+  lint` na raiz roda `eslint .`. Não crie config de lint por app.
+- **Prettier:** `.prettierrc.json` na raiz. `npm run format` formata tudo.
+
+Ao gerar uma app, o scaffold já estende o `tsconfig.base.json` — não duplique
+regras de config por app.
+
+## 7. Contratos entre apps
+
+Quando duas apps se comunicam (ex.: um front consome a API de um serviço do mesmo
+ecossistema), os **tipos/contratos compartilhados** vão para
+`packages/contracts` como **`@ecosystem/contracts`** — nunca redeclarados em cada
+app. Assim, mudar o contrato num lugar quebra o build de quem depende (feedback
+cedo), em vez de divergir silenciosamente. Registre o package em `ecosystem.json`.
+
+## 8. Grafo de dependências (`*deps`)
+
+**`*deps`** monta e mostra o grafo de dependências do ecossistema:
+
+1. Leia o `ecosystem.json` (apps e packages).
+2. Para cada app/package, extraia os imports `@ecosystem/*` do código.
+3. Monte o grafo `app → package → package` e apresente como árvore/tabela.
+4. **Detecte ciclos** (A → B → A) e sinalize como erro — dependências entre
+   packages devem ser acíclicas.
+
+Use o grafo antes de mover código para `packages/` e antes de releases, para saber
+o que é afetado por uma mudança.

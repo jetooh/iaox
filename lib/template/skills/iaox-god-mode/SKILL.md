@@ -155,6 +155,7 @@ agent definition → `aiox-architect` to design it, then write the file).
 | `*route {task}` | Classify + dispatch to the optimal agent |
 | `*agents` | List all agents + their subagent types |
 | `*list-apps` | Show the ecosystem's apps from `ecosystem.json` (name, stack, port, status) |
+| `*deps` | Dependency graph of the ecosystem (app → package), with cycle detection |
 | `*workflows` | Show workflows + selection guide |
 | `*orchestrate {flow}` | Run a multi-agent workflow end to end |
 | `*lifecycle {story}` | Story status + next action |

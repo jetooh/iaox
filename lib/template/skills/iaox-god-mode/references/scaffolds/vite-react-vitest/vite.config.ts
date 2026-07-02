@@ -11,5 +11,7 @@ export default defineConfig({
     globals: true,
     // Unit tests live in src/; e2e/ is Playwright's territory.
     include: ['src/**/*.test.{ts,tsx}'],
+    // Transpile workspace packages (@ecosystem/*, TS source) when used in tests.
+    server: { deps: { inline: [/@ecosystem\//] } },
   },
 });
