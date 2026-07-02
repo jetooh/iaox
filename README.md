@@ -35,9 +35,17 @@ Depois, dentro do projeto, você conversa com a God Mode em linguagem natural
 ### A partir do GitHub (recomendado)
 
 ```bash
-npx github:jetooh/iaox meu-orquestrador
+npx github:jetooh/iaox meu-orquestrador   # cria a pasta meu-orquestrador/
 cd meu-orquestrador
 claude        # depois digite: /iaox-god-mode
+```
+
+**Ou instale na pasta atual** (sem criar subpasta — ideal para adicionar a um
+projeto existente):
+
+```bash
+cd meu-projeto-existente
+npx github:jetooh/iaox          # (ou "npx github:jetooh/iaox .")
 ```
 
 **Opções úteis:**

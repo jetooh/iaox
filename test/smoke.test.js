@@ -57,3 +57,18 @@ test('init falha com nome de projeto inválido', async () => {
     await fse.remove(cwd);
   }
 });
+
+test('init sem nome instala na PASTA ATUAL (não cria subpasta)', async () => {
+  const cwd = await fse.mkdtemp(path.join(os.tmpdir(), 'iaox-cur-'));
+  try {
+    const res = spawnSync('node', [BIN, '--dry-run', '--ide', 'claude-code'], { cwd, encoding: 'utf-8' });
+    assert.equal(res.status, 0, `stderr:\n${res.stderr}`);
+    // instalou no próprio cwd
+    assert.ok(await fse.pathExists(path.join(cwd, '.claude', 'skills', 'iaox-god-mode', 'SKILL.md')));
+    assert.ok(await fse.pathExists(path.join(cwd, 'ecosystem.json')));
+    // NÃO criou uma subpasta com o nome
+    assert.ok(!(await fse.pathExists(path.join(cwd, path.basename(cwd), '.claude'))), 'não deve criar subpasta');
+  } finally {
+    await fse.remove(cwd);
+  }
+});
