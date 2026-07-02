@@ -14,15 +14,20 @@ neste orquestrador. As regras detalhadas ficam em `.claude/rules/` — este arqu
   UI, labels, mensagens, validações exibidas, e-mails, i18n.
 - Resumo: **code in English, app speaks Portuguese.**
 
-## 2. Memórias e regras — uma pasta por aplicação
+## 2. Isolamento por aplicação — regras, memória, docs e stories
 
-Cada app tem memórias e regras **isoladas**, em pastas com o **nome da aplicação**:
+Cada camada é **global no orquestrador** ou **isolada por app** (pasta com o nome
+da app). Nunca misture o de uma app com o de outra.
 
-- Regras do app → `.claude/rules/apps/<nome-da-aplicacao>/`
-- Memórias do app → `.claude/memory/apps/<nome-da-aplicacao>/`
-- Regras/memórias **globais** (valem para todos) → raiz de `.claude/rules/` e
-  `.claude/memory/`.
-- Nunca misture regras/memórias de apps diferentes na mesma pasta.
+| Camada | De uma app | Global (orquestrador) |
+|--------|-----------|------------------------|
+| Regras | `.claude/rules/apps/<app>/` | `.claude/rules/*.md` |
+| Memória | `.claude/memory/apps/<app>/` | `.claude/memory/` |
+| Features (slices) | `docs/apps/<app>/features/<slug>/` | `docs/features/<slug>/` |
+| Stories | `docs/apps/<app>/stories/` | `docs/stories/` |
+
+A **memória** persiste fatos/decisões entre sessões (índice `MEMORY.md`); consulte
+o índice antes de agir. Ver as regras `memory.md` e `app-structure.md`.
 
 ## 3. Estrutura de pastas
 
@@ -33,17 +38,20 @@ raiz/  (orquestrador/monorepo — repositório git)
 ├── package.json + turbo.json       # workspaces + Turborepo
 ├── .claude/
 │   ├── rules/{globais}.md + apps/<app>/
-│   ├── memory/{globais} + apps/<app>/
-│   └── agents/                     # @scaffolder, @security, @e2e, @i18n
-├── docs/
-│   ├── PRD.md
-│   └── features/<slug>/            # specs (vertical slices) — na raiz
+│   ├── memory/MEMORY.md + apps/<app>/     # memória (índice global + por app)
+│   └── agents/                     # 8 agentes da casa
+├── docs/                           # docs do ORQUESTRADOR (global/cross-app)
+│   ├── PRD.md · architecture/ · stories/ · features/<slug>/
+│   └── apps/<app>/                 # docs e stories de CADA app
+│       ├── features/<slug>/
+│       └── stories/
 ├── app/<app>/                      # o CÓDIGO de cada aplicação
 ├── packages/<nome>/                # código compartilhado (@ecosystem/<nome>)
 └── screenshot/                     # prints do Playwright (limpos a cada 12h)
 ```
 
-- **Specs/docs ficam na raiz** (`docs/features/…`); **código vai para `app/<app>/`**.
+- **Docs/stories de uma app** → `docs/apps/<app>/`; **do orquestrador** → `docs/`.
+  **Código** → `app/<app>/`.
 
 ## 4. Criar uma aplicação (`*create-project <app>`)
 

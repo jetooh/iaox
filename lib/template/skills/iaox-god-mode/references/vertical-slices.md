@@ -17,24 +17,32 @@ score. Nada de código que "deriva" da spec sem deixar rastro.
 ```
 <raiz-do-orquestrador>/          # o repositório (git)
 ├── .claude/
-│   ├── rules/
-│   │   ├── *.md                 # regras GLOBAIS (valem p/ todos os apps)
-│   │   └── apps/<projeto>/      # regras SÓ daquele app (isoladas)
-│   └── memory/apps/<projeto>/   # memórias SÓ daquele app (isoladas)
-├── docs/
+│   ├── rules/{globais} + apps/<app>/       # regras: global + por app
+│   └── memory/MEMORY.md + apps/<app>/       # memória: global + por app
+├── docs/                        # docs do ORQUESTRADOR (global / cross-app)
 │   ├── PRD.md                   # visão do produto; §Features lista F-01, F-02…
-│   └── features/<slug>/         # UMA pasta por vertical slice
-│       ├── SPEC.md              # problema, escopo, critérios de aceite (AC-NN)
-│       ├── TASKS.md             # AC quebrados em tarefas, cada uma cita seu AC
-│       ├── RULES.md             # invariantes da feature (avaliadas pelo @qa)
-│       ├── SCORE.md             # nota 0–10 por dimensão = ship gate
-│       └── DECISIONS.md         # journal do "porquê" de cada escolha
-└── app/<projeto>/               # o CÓDIGO da aplicação (o que roda/deploya)
+│   ├── architecture/           # arquitetura global
+│   ├── stories/                # stories globais (cross-app)
+│   ├── features/<slug>/        # vertical slices globais/cross-app
+│   └── apps/<app>/             # docs de CADA app (isoladas)
+│       ├── features/<slug>/    # vertical slices da app
+│       │   ├── SPEC.md · TASKS.md · RULES.md · SCORE.md · DECISIONS.md
+│       └── stories/            # stories da app
+└── app/<app>/                  # o CÓDIGO da aplicação (o que roda/deploya)
 ```
 
-**Regra de ouro do layout:** as **specs/docs ficam na raiz** (`docs/features/…`);
-o **código vai para `app/<projeto>/`**. A spec aponta para o app no campo `App:` e
-para os caminhos tocados no campo `Touches:`.
+**Regra de ouro do layout:** cada camada é **global no orquestrador** ou **isolada
+por app**:
+
+| Artefato | De uma app | Do orquestrador (global/cross-app) |
+|----------|-----------|-------------------------------------|
+| Código | `app/<app>/` | — |
+| Feature (slice) | `docs/apps/<app>/features/<slug>/` | `docs/features/<slug>/` |
+| Stories | `docs/apps/<app>/stories/` | `docs/stories/` |
+| Regras | `.claude/rules/apps/<app>/` | `.claude/rules/*.md` |
+| Memória | `.claude/memory/apps/<app>/` | `.claude/memory/` |
+
+A SPEC aponta para o app no campo `App:` e para os caminhos tocados em `Touches:`.
 
 **Isolamento por app:** cada aplicação tem regras e memórias em pastas separadas
 (`.claude/rules/apps/<projeto>/` e `.claude/memory/apps/<projeto>/`). Criar um
@@ -53,8 +61,9 @@ Os templates de cada arquivo estão em
 
 1. **Deriva do PRD.** A feature deve existir em `docs/PRD.md §Features` (F-NN). Se
    não existir, `@pm` a adiciona primeiro (No Invention — Art. IV).
-2. **Cria a pasta** `docs/features/<slug>/` e copia os 5 templates de
-   `references/feature-templates/`.
+2. **Cria a pasta** no lugar certo — se a feature é de uma app,
+   `docs/apps/<app>/features/<slug>/`; se é global/cross-app,
+   `docs/features/<slug>/` — e copia os 5 templates de `references/feature-templates/`.
 3. **Preenche a SPEC** com `@sm`: problema, escopo, e **critérios de aceite
    testáveis** (AC-01, AC-02…). Cada AC precisa ser verificável sozinho.
 4. **Valida** com `@po`: os AC cobrem o escopo? São verificáveis? (GO / NO-GO).

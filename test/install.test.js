@@ -77,6 +77,15 @@ describe('instalação completa (--dry-run)', () => {
     assert.match(gitignore, /^access\.md$/m, '.gitignore deve ignorar access.md');
   });
 
+  test('memória e docs: índice global + isolamento por app', () => {
+    assert.ok(fse.existsSync(path.join(dir, '.claude', 'memory', 'MEMORY.md')), 'MEMORY.md global faltando');
+    assert.ok(fse.existsSync(path.join(dir, '.claude', 'memory', 'apps')), 'pasta memory/apps faltando');
+    assert.ok(fse.existsSync(path.join(dir, 'docs', 'stories')), 'docs/stories (orquestrador) faltando');
+    assert.ok(fse.existsSync(path.join(dir, 'docs', 'apps')), 'docs/apps (por app) faltando');
+    const claude = fse.readFileSync(path.join(dir, 'CLAUDE.md'), 'utf-8');
+    assert.match(claude, /@\.claude\/memory\/MEMORY\.md/, 'CLAUDE.md deve referenciar o índice de memória');
+  });
+
   test('hook de limpeza de screenshots registrado', () => {
     assert.ok(fse.existsSync(path.join(dir, '.claude', 'iaox-clean-screenshots.cjs')));
     const settings = fse.readJsonSync(path.join(dir, '.claude', 'settings.json'));
@@ -91,7 +100,7 @@ describe('instalação completa (--dry-run)', () => {
 
   test('regras globais da casa instaladas', () => {
     const rulesDir = path.join(dir, '.claude', 'rules');
-    for (const r of ['vertical-slices', 'app-structure', 'tooling', 'ecosystem', 'secrets', 'observability', 'finops', 'a11y', 'god-mode-overview']) {
+    for (const r of ['vertical-slices', 'app-structure', 'tooling', 'ecosystem', 'secrets', 'observability', 'finops', 'a11y', 'memory', 'god-mode-overview']) {
       assert.ok(fse.existsSync(path.join(rulesDir, `${r}.md`)), `regra ${r} faltando`);
     }
   });
