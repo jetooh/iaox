@@ -71,6 +71,8 @@ Cada orquestrador é um **monorepo** que hospeda várias apps:
 - **Portas únicas** por app (5173+), sem colisão.
 - **Config compartilhada** na raiz: `tsconfig.base.json`, ESLint (flat) e Prettier.
 - **Contratos** entre apps em `packages/contracts`; grafo de dependências via `*deps`.
+- **CI "affected"** (GitHub Actions) — testa/builda só o que mudou (`turbo --affected`).
+- **Release por app** (Changesets) e **`*doctor`** (saúde do ecossistema).
 
 ### Desenvolvimento em vertical slices
 
@@ -91,7 +93,9 @@ Cada app tem regras e memórias próprias, separadas:
 
 ### Tooling por padrão
 
-- **knip** (código morto) em apps JS/TS · **Playwright** (E2E + screenshots) em apps web.
+- **Vitest** (unit) · **Playwright** (E2E + screenshots) · **knip** (código morto)
+- **ESLint + Prettier** (config compartilhada na raiz) · **Husky + lint-staged** (pre-commit)
+- **Zod** valida `.env` no boot · **Changesets** (versão + changelog por app)
 - Screenshots vão para `screenshot/` na raiz, **limpos a cada 12h** por um hook.
 
 ## 🗂️ Estrutura de um orquestrador
@@ -101,11 +105,12 @@ meu-orquestrador/  (monorepo — git)
 ├── instruction.md              # convenções da casa (carregado via @instruction.md)
 ├── ecosystem.json              # catálogo de apps e packages
 ├── package.json + turbo.json   # workspaces + Turborepo
-├── tsconfig.base.json · eslint.config.js · .prettierrc.json   # config compartilhada
-├── .claude/
-│   ├── rules/{globais}.md + apps/<app>/
-│   ├── memory/apps/<app>/
-│   ├── agents/                 # @scaffolder, @security, @e2e, @i18n
+├── tsconfig.base.json · eslint.config.js · .prettierrc.json · knip.json  # config compartilhada
+├── .changeset/ · .husky/ · .github/workflows/   # release, pre-commit, CI
+├── .claude/                    # config + cérebro (na raiz)
+│   ├── rules/{globais}.md + apps/<app>/   # regras (global + por app)
+│   ├── memory/{globais} + apps/<app>/     # memória (global + por app)
+│   ├── agents/                 # 8 agentes da casa
 │   └── skills/iaox-god-mode/
 ├── docs/features/<slug>/       # specs (vertical slices)
 ├── app/<app>/                  # o código de cada aplicação
@@ -122,6 +127,9 @@ meu-orquestrador/  (monorepo — git)
 | `*create-feature <slug>` | Cria uma vertical slice em `docs/features/<slug>/` |
 | `*list-apps` | Mostra as apps do ecossistema (nome, stack, porta, status) |
 | `*deps` | Grafo de dependências do ecossistema (app → package) + ciclos |
+| `*doctor` | Saúde do ecossistema (registry↔disco, portas, órfãs, ciclos) |
+| `*secrets [app]` | Checa `.env` vs `.env.example` (sem vazar valores) |
+| `*migrate` | Traz um projeto antigo ao padrão atual, preservando regras/memórias |
 | `*route <task>` | Classifica e despacha para o agente certo |
 | `*create-agent` · `*create-rule` … | Cria componentes do framework |
 | `*exit` | Desativa o God Mode na sessão |
@@ -144,7 +152,7 @@ Native…) geram um scaffold mínimo idiomático seguindo as mesmas convenções
 **11 agentes core** (do `aiox-core`): `@dev`, `@qa`, `@architect`, `@pm`, `@po`,
 `@sm`, `@analyst`, `@data-engineer`, `@ux-design-expert`, `@devops`, `@aiox-master`.
 
-**4 agentes da casa** (em `.claude/agents/`):
+**8 agentes da casa** (em `.claude/agents/`):
 
 | Agente | Papel |
 |--------|-------|
@@ -152,6 +160,10 @@ Native…) geram um scaffold mínimo idiomático seguindo as mesmas convenções
 | `@security` | gate de segurança (OWASP, segredos, deps) |
 | `@e2e` | testes E2E + screenshots (Playwright) |
 | `@i18n` | convenção de idioma (code EN / app PT) |
+| `@platform` | guardião macro (grafo, contratos, releases, doctor) |
+| `@observability` | SRE + LLM observability (Golden Signals, SLO, evals) |
+| `@finops` | custo cloud + IA (routing, caching, budget) |
+| `@a11y` | acessibilidade WCAG 2.2 AA (teclado, contraste, axe) |
 
 ## 🛠️ Comandos do CLI
 
@@ -188,7 +200,7 @@ lib/commands/      # implementação de cada comando
 lib/core/          # bootstrap, god-mode-installer, ecosystem, post-setup
 lib/utils/         # tool-paths, validators, platform, skill-converter
 lib/template/      # 🧠 o que é instalado: skill, rules, agents, scaffolds, root/
-test/              # smoke tests (--dry-run) + unit tests
+test/              # unit + smoke (--dry-run) + integração (instalação completa)
 ```
 
 ## 🧪 Testar
