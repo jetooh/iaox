@@ -163,11 +163,13 @@ determinístico e versionado (já testado — testes, lint e build passam de fá
 
 | Stack | Inclui |
 |-------|--------|
-| **Vite + React + Vitest** | React + TS, Vitest, Playwright + axe (a11y), Zod (valida env no boot), knip, porta única |
+| **Vite + React + Vitest** | React + TS, Vitest, Playwright, Zod (valida env no boot), knip, porta única |
+| **Next.js (App Router)** | Next 14 + TS, Vitest, Playwright, Zod (env), knip, porta única |
 | **Flutter** | Material 3, widget test, `flutter analyze` |
 
-Outras opções (Next.js, Angular, NestJS, Go, Java, .NET, PHP, Rust, React
-Native…) geram um scaffold mínimo idiomático seguindo as mesmas convenções.
+Cada um é **testado de fábrica** (test, build, knip e E2E passam). Outras opções
+(Angular, NestJS, Go, Java, .NET, PHP, Rust, React Native…) geram um scaffold
+mínimo idiomático seguindo as mesmas convenções.
 
 ## 🧑‍💻 Agentes
 
