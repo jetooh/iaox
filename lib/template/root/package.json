@@ -15,7 +15,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "knip": "knip",
-    "prepare": "husky"
+    "prepare": "husky",
+    "changeset": "changeset",
+    "version-packages": "changeset version"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -27,6 +29,7 @@
     ]
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.9",
     "@eslint/js": "^9.13.0",
     "eslint": "^9.13.0",
     "globals": "^15.11.0",

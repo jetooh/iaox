@@ -31,10 +31,18 @@ describe('instalação completa (--dry-run)', () => {
 
   after(() => fse.removeSync(cwd));
 
-  test('instala os 4 agentes da casa', () => {
-    for (const a of ['scaffolder', 'security', 'e2e', 'i18n']) {
+  test('instala os 5 agentes da casa', () => {
+    for (const a of ['scaffolder', 'security', 'e2e', 'i18n', 'platform']) {
       assert.ok(fse.existsSync(path.join(dir, '.claude', 'agents', `${a}.md`)), `agente ${a} faltando`);
     }
+  });
+
+  test('Camada 3: CI affected + Changesets', () => {
+    assert.ok(fse.existsSync(path.join(dir, '.github', 'workflows', 'ecosystem-ci.yml')), 'workflow de CI faltando');
+    assert.ok(fse.existsSync(path.join(dir, '.changeset', 'config.json')), 'config do changesets faltando');
+    const pkg = fse.readJsonSync(path.join(dir, 'package.json'));
+    assert.equal(pkg.scripts.changeset, 'changeset', 'script changeset faltando');
+    assert.ok(pkg.devDependencies['@changesets/cli'], '@changesets/cli faltando');
   });
 
   test('instala os 2 scaffolds determinísticos com placeholders', () => {

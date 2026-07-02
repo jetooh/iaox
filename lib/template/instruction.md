@@ -80,6 +80,10 @@ Nunca remova regras/memórias globais nem de outros apps.
   `.prettierrc.json` na raiz — herdados por todas as apps (não duplique config).
 - **Contratos:** tipos entre apps em `packages/contracts` (`@ecosystem/contracts`).
 - **`*deps`:** grafo de dependências do ecossistema, com detecção de ciclos.
+- **CI/release:** `.github/workflows/ecosystem-ci.yml` roda lint/knip + `turbo
+  --affected`; releases por app via Changesets (`npm run changeset`).
+- **`*doctor`:** saúde do ecossistema (registry↔disco, portas, órfãs, ciclos),
+  via `@platform`.
 - **Segredos:** `.env` na raiz (global) e `app/<app>/.env` (por app), nunca
   commitados; só os `.env.example` são versionados. `*secrets` checa o que falta
   sem vazar valores. Ver a regra `secrets.md`.

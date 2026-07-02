@@ -26,6 +26,7 @@ To call an agent autonomously, use the Task tool with its `subagent_type`.
 
 | Agent | `subagent_type` | Domain | Chamado quando |
 |-------|-----------------|--------|----------------|
+| `@platform` | `platform` | Guardião macro do ecossistema (grafo, contratos, releases, doctor) | cross-app, antes de release, diagnóstico |
 | `@scaffolder` | `scaffolder` | Gera o scaffold determinístico da stack | passo 2 do `*create-project` |
 | `@security`   | `security`   | Gate de segurança (OWASP, segredos, deps) | antes do `Done`, ou features sensíveis |
 | `@e2e`        | `e2e`        | Testes E2E + screenshots (Playwright) | validar AC visuais / bater print |

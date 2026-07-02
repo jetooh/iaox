@@ -88,3 +88,32 @@ cedo), em vez de divergir silenciosamente. Registre o package em `ecosystem.json
 
 Use o grafo antes de mover código para `packages/` e antes de releases, para saber
 o que é afetado por uma mudança.
+
+## 9. CI "affected"
+
+O projeto gerado tem um workflow `.github/workflows/ecosystem-ci.yml` que, em cada
+push/PR, roda `lint` + `knip` no ecossistema todo e **`turbo run test build
+--affected`** — só testa/builda os workspaces que mudaram desde a base. Rápido
+mesmo com muitas apps.
+
+## 10. Release por app (Changesets)
+
+Cada app/package versiona de forma **independente** via Changesets:
+- `npm run changeset` — registra a mudança (escolhe apps afetadas + tipo de bump).
+- `npm run version-packages` — aplica as versões e gera/atualiza o CHANGELOG por app.
+- Publicação remota é do `@devops`.
+
+## 11. Doctor do ecossistema (`*doctor`)
+
+**`*doctor`** valida a saúde do ecossistema (executado pelo `@platform`):
+
+| Check | Falha se… |
+|-------|-----------|
+| Registry ↔ disco | app no `ecosystem.json` sem pasta em `app/`, ou vice-versa |
+| Portas únicas | duas apps com a mesma `port` |
+| Apps órfãs | pasta em `app/` não registrada no `ecosystem.json` |
+| Packages sem uso | package em `packages/` não importado por ninguém (via `*deps`) |
+| Ciclos de dependência | `A → B → A` entre packages |
+| Config compartilhada | app cujo `tsconfig.json` não estende `../../tsconfig.base.json` |
+
+Reporte por severidade e proponha correções — nunca aplique sem confirmar.
