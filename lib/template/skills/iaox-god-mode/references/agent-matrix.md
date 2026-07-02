@@ -33,6 +33,7 @@ To call an agent autonomously, use the Task tool with its `subagent_type`.
 | `@i18n`       | `i18n`       | Convenção de idioma (code EN / app PT) | telas com texto ao usuário |
 | `@observability` | `observability` | SRE + LLM observability (Golden Signals, SLO, telemetria, evals, incidentes) | após deploy, monitorar produção, qualidade de IA |
 | `@finops`     | `finops`     | Custo cloud + IA (routing, caching, compression, budget, atribuição) | reduzir custo, dimensionar features de IA, escalar |
+| `@a11y`       | `a11y`       | Acessibilidade WCAG 2.2 AA (teclado, semântica, contraste, axe) | telas/componentes de UI, antes do Done |
 
 > If an `aiox-*` subagent isn't available, adopt the agent's persona inline by
 > reading `.aiox-core/development/agents/{name}.md` and executing as that agent.

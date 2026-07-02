@@ -31,8 +31,8 @@ describe('instalação completa (--dry-run)', () => {
 
   after(() => fse.removeSync(cwd));
 
-  test('instala os 7 agentes da casa', () => {
-    for (const a of ['scaffolder', 'security', 'e2e', 'i18n', 'platform', 'observability', 'finops']) {
+  test('instala os 8 agentes da casa', () => {
+    for (const a of ['scaffolder', 'security', 'e2e', 'i18n', 'platform', 'observability', 'finops', 'a11y']) {
       assert.ok(fse.existsSync(path.join(dir, '.claude', 'agents', `${a}.md`)), `agente ${a} faltando`);
     }
   });
@@ -91,7 +91,7 @@ describe('instalação completa (--dry-run)', () => {
 
   test('regras globais da casa instaladas', () => {
     const rulesDir = path.join(dir, '.claude', 'rules');
-    for (const r of ['vertical-slices', 'app-structure', 'tooling', 'ecosystem', 'secrets', 'observability', 'finops', 'god-mode-overview']) {
+    for (const r of ['vertical-slices', 'app-structure', 'tooling', 'ecosystem', 'secrets', 'observability', 'finops', 'a11y', 'god-mode-overview']) {
       assert.ok(fse.existsSync(path.join(rulesDir, `${r}.md`)), `regra ${r} faltando`);
     }
   });

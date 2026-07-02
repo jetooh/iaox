@@ -90,6 +90,9 @@ Nunca remova regras/memórias globais nem de outros apps.
 - **FinOps:** custo é uma feature — features de IA declaram custo e aplicam
   alavancas (model routing, caching, compression, limites); budget + alertas. Via
   `@finops`. Ver a regra `finops.md`.
+- **Acessibilidade:** toda UI segue WCAG 2.2 AA (teclado, semântica, contraste,
+  leitor de tela) com testes axe; feature com UI só é Done sem violações
+  críticas. Via `@a11y`. Ver a regra `a11y.md`.
 - **Segredos:** `.env` na raiz (global) e `app/<app>/.env` (por app), nunca
   commitados; só os `.env.example` são versionados. `*secrets` checa o que falta
   sem vazar valores. Ver a regra `secrets.md`.
