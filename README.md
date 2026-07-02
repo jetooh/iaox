@@ -146,7 +146,7 @@ meu-orquestrador/  (monorepo — git)
 |---------|------|
 | `*create-project <nome>` | Menu de stack → cria `app/<nome>` + pastas isoladas + registro |
 | `*delete-project <nome>` | Remove a app e suas pastas do disco e do `ecosystem.json` |
-| `*create-feature <slug>` | Cria uma vertical slice em `docs/features/<slug>/` |
+| `*create-feature <slug>` | Cria uma vertical slice (`docs/apps/<app>/features/` da app, ou `docs/features/` global) |
 | `*list-apps` | Mostra as apps do ecossistema (nome, stack, porta, status) |
 | `*deps` | Grafo de dependências do ecossistema (app → package) + ciclos |
 | `*doctor` | Saúde do ecossistema (registry↔disco, portas, órfãs, ciclos) |
@@ -163,7 +163,7 @@ determinístico e versionado (já testado — testes, lint e build passam de fá
 
 | Stack | Inclui |
 |-------|--------|
-| **Vite + React + Vitest** | React + TS, Vitest, Playwright, knip, porta única |
+| **Vite + React + Vitest** | React + TS, Vitest, Playwright + axe (a11y), Zod (valida env no boot), knip, porta única |
 | **Flutter** | Material 3, widget test, `flutter analyze` |
 
 Outras opções (Next.js, Angular, NestJS, Go, Java, .NET, PHP, Rust, React
