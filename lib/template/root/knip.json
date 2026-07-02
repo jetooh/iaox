@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignore": [".claude/**", ".aiox-core/**"],
+  "workspaces": {
+    "app/*": {
+      "entry": ["e2e/**/*.spec.ts"],
+      "project": "src/**/*.{ts,tsx}"
+    },
+    "packages/*": {
+      "entry": ["src/index.ts"],
+      "project": "src/**/*.ts"
+    }
+  }
+}

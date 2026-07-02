@@ -56,7 +56,7 @@ describe('instalação completa (--dry-run)', () => {
   test('monorepo: workspaces + turbo + config compartilhada', () => {
     const pkg = fse.readJsonSync(path.join(dir, 'package.json'));
     assert.deepEqual(pkg.workspaces, ['app/*', 'packages/*']);
-    for (const f of ['turbo.json', 'tsconfig.base.json', 'eslint.config.js', '.prettierrc.json', 'app/.gitkeep', 'packages/README.md']) {
+    for (const f of ['turbo.json', 'tsconfig.base.json', 'eslint.config.js', '.prettierrc.json', 'knip.json', 'app/.gitkeep', 'packages/README.md']) {
       assert.ok(fse.existsSync(path.join(dir, f)), `${f} faltando`);
     }
   });

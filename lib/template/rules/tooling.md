@@ -5,13 +5,14 @@ orquestrador recebe **por padrão**, e a política de screenshots.
 
 ## knip — código morto (apps JS/TS)
 
-Todo app cuja stack seja **JavaScript/TypeScript** (Vite+React+Vitest, Next.js,
-Angular, NestJS, React Native) recebe o **knip** por padrão:
+Apps JS/TS (Vite+React+Vitest, Next.js, Angular, NestJS, React Native) são
+cobertas pelo **knip**, configurado **uma vez na raiz** (`knip.json`) — não por app:
 
-- Instalar como devDependency no `app/<projeto>/`: `npm i -D knip`.
-- Adicionar o script `"knip": "knip"` ao `package.json` do app.
-- Rodar o knip antes de fechar uma feature (parte do ship gate do `@qa`): não
-  deixar exports, arquivos ou dependências não usados.
+- O `knip.json` da raiz define os workspaces (`app/*`, `packages/*`) e ignora os
+  arquivos de framework (`.claude/`, `.aiox-core/`).
+- Rode **da raiz**: `npm run knip` (analisa o monorepo inteiro de uma vez).
+  Rodar knip dentro de um workspace falha — as devDeps ficam *hoisted* na raiz.
+- Faz parte do ship gate do `@qa`: não deixar exports/arquivos/deps não usados.
 
 > Stacks não-JS/TS (Flutter, Go, Java, Rust, .NET, PHP) **não** usam knip — usam o
 > analisador nativo da linguagem (ex.: `flutter analyze`, `go vet`).

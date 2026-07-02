@@ -13,9 +13,6 @@
     "test": {
       "dependsOn": ["^build"]
     },
-    "lint": {},
-    "knip": {
-      "cache": false
-    }
+    "lint": {}
   }
 }
