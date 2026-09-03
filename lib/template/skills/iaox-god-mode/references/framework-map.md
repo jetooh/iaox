@@ -1,67 +1,182 @@
-# Framework Map — Paths & Boundaries
+# Framework Map — Complete Navigation Reference
 
-How the IAOX project is laid out, and what may or may not be modified.
+## 4-Layer Boundary System
 
-## Directory map
+| Layer | Mutability | Paths | Enforced By |
+|-------|-----------|-------|-------------|
+| **L1** Framework Core | NEVER modify | `.aiox-core/core/`, `.aiox-core/constitution.md`, `bin/aios.js`, `bin/aios-init.js` | deny rules in `.claude/settings.json` |
+| **L2** Framework Templates | NEVER modify (extend-only) | `.aiox-core/development/tasks/`, `.aiox-core/development/templates/`, `.aiox-core/development/checklists/`, `.aiox-core/development/workflows/`, `.aiox-core/infrastructure/` | deny rules |
+| **L3** Project Config | Mutable (with care) | `.aiox-core/data/`, `agents/*/MEMORY.md`, `core-config.yaml` | allow rules |
+| **L4** Project Runtime | ALWAYS modify | `docs/stories/`, `packages/`, `squads/`, `tests/` | working area |
+
+**Toggle:** `core-config.yaml` → `boundary.frameworkProtection: true/false`
+
+---
+
+## Component Locator
+
+| Component | Location | Count |
+|-----------|----------|-------|
+| Agent definitions | `.aiox-core/development/agents/{agent-id}/` | 11 |
+| Agent memory | `.aiox-core/development/agents/{agent-id}/MEMORY.md` | 11 |
+| Executable tasks | `.aiox-core/development/tasks/` | 207+ |
+| Workflow definitions | `.aiox-core/development/workflows/` | 15 |
+| Templates | `.aiox-core/development/templates/` | 8+ |
+| Checklists | `.aiox-core/development/checklists/` | 9 |
+| Constitution | `.aiox-core/constitution.md` | 1 |
+| Rules | `.claude/rules/` | 8 |
+| Handoff artifacts | `.aiox/handoffs/` | runtime |
+| Squads | `.claude/squads/` | 5 |
+| Commands | `.claude/commands/` | 60+ |
+| Skills | `.claude/skills/` | varies |
+| Core config | `core-config.yaml` | 1 |
+| Workflow chains | `.aiox-core/data/workflow-chains.yaml` | 1 |
+| Knowledge base | `.aiox-core/data/aios-kb.md` | 1 |
+| Stories | `docs/stories/` | varies |
+| PRDs | `docs/prd/` | varies |
+| Architecture docs | `docs/architecture/` | varies |
+
+---
+
+## Task Resolution Pattern
 
 ```
-project/
-├── .claude/                     # Claude Code config
-│   ├── settings.json            # permissions + deny rules
-│   ├── rules/                   # contextual rules
-│   ├── skills/iaox-god-mode/    # THIS skill
-│   ├── commands/IAOX/agents/    # @agent command resolvers
-│   └── CLAUDE.md                # project instructions
-├── .aiox-core/                  # framework core (installed by aiox-core)
-│   ├── constitution.md
-│   ├── core/                    # engine internals
-│   ├── development/
-│   │   ├── agents/              # agent definitions
-│   │   ├── tasks/               # executable tasks
-│   │   ├── templates/           # document/code templates
-│   │   ├── checklists/          # validation checklists
-│   │   └── workflows/           # multi-step workflows
-│   └── data/                    # registries, config data
-├── docs/
-│   ├── stories/                 # development stories
-│   ├── prd/                     # product requirements
-│   └── architecture/            # architecture docs
-├── squads/                      # modular agent teams
-└── .mcp.json                    # MCP servers
+User request
+  → Match to agent command
+  → Resolve to task file via dependencies
+  → Path: .aiox-core/development/{type}/{name}
+
+Example:
+  "draft story" → @sm *draft → create-next-story.md
+  → .aiox-core/development/tasks/create-next-story.md
 ```
 
-## Mutability layers (L1–L4)
+---
 
-| Layer | Mutability | Paths | Notes |
-|-------|-----------|-------|-------|
-| **L1** Framework Core | NEVER modify | `.aiox-core/core/`, `.aiox-core/constitution.md`, `bin/` | Protected |
-| **L2** Framework Templates | Extend-only | `.aiox-core/development/{tasks,templates,checklists,workflows}/` | Add, don't edit shipped ones |
-| **L3** Project Config | Conditionally mutable | `.aiox-core/data/`, `core-config.yaml`, agent MEMORY.md | Allowed via config |
-| **L4** Project Runtime | ALWAYS modify | `docs/stories/`, `packages/`, `squads/`, `tests/` | The project's own work |
+## Rules System
 
-> Before any CONFIGURE action, check the layer. Reject edits to L1/L2 shipped
-> files; create new files instead.
+| Rule File | Description | Auto-loads When |
+|-----------|-------------|----------------|
+| `agent-authority.md` | Delegation matrix, exclusive ops | Agent context |
+| `agent-handoff.md` | Context compaction protocol | Agent switching |
+| `agent-memory-imports.md` | Agent memory lifecycle | Memory operations |
+| `coderabbit-integration.md` | Code review integration | Code review |
+| `ids-principles.md` | Incremental Development gates | Component creation |
+| `mcp-usage.md` | MCP tool selection priority | Tool usage |
+| `story-lifecycle.md` | Story transitions, quality gates | Story files |
+| `workflow-execution.md` | 4 primary workflows | Workflow execution |
+| `tool-examples.md` | Concrete tool input examples | Tool usage |
+| `tool-response-filtering.md` | Output filtering rules | Tool responses |
 
-## Where to save new components
+---
 
-| Component | Path |
-|-----------|------|
-| Agent     | `.aiox-core/development/agents/{name}.md` |
-| Task      | `.aiox-core/development/tasks/{name}.md` |
-| Workflow  | `.aiox-core/development/workflows/{name}.md` |
-| Checklist | `.aiox-core/development/checklists/{name}.md` |
-| Template  | `.aiox-core/development/templates/{name}.md` |
-| Rule      | `.claude/rules/{name}.md` |
-| Data      | `.aiox-core/data/{name}.yaml` |
-| Squad     | `squads/{name}/` |
+## Checklists
 
-## Constitution articles (enforced)
+| Checklist | Used By | When |
+|-----------|---------|------|
+| `story-draft-checklist.md` | @sm | Before @po review |
+| `story-dod-checklist.md` | @dev/@qa | Definition of Done |
+| `po-master-checklist.md` | @po | Story validation |
+| `pre-push-checklist.md` | @devops | Before push |
+| `self-critique-checklist.md` | @dev | Self-review |
+| `agent-quality-gate.md` | All | Activation quality |
+| `memory-audit-checklist.md` | @aiox-master | Memory health |
+| `brownfield-compatibility-checklist.md` | @architect | Legacy assessment |
+| `issue-triage-checklist.md` | @pm | GitHub issue triage |
 
-| # | Principle | Severity |
-|---|-----------|----------|
-| I   | CLI First | NON-NEGOTIABLE |
-| II  | Agent Authority | NON-NEGOTIABLE |
-| III | Story-Driven Development | MUST |
-| IV  | No Invention | MUST |
-| V   | Quality First | MUST |
-| VI  | Absolute Imports | SHOULD |
+---
+
+## MCP & Tool Priority
+
+### Native First (ALWAYS)
+
+| Task | Tool |
+|------|------|
+| Read files | `Read` |
+| Write/edit files | `Write` / `Edit` |
+| Run commands | `Bash` |
+| Search files | `Glob` |
+| Search content | `Grep` |
+
+### MCP Servers
+
+| MCP | Purpose | Access |
+|-----|---------|--------|
+| Context7 | Library docs | `resolve-library-id` → `get-library-docs` |
+| EXA | Web search | `web_search_exa` |
+| Apify | Web scraping | `search-actors` → `call-actor` |
+| playwright | Browser | Direct MCP |
+| CodeRabbit | Code review | WSL execution |
+
+---
+
+## Handoff Protocol Details
+
+### When Switching Agents
+
+1. **Outgoing** generates YAML artifact:
+   ```yaml
+   handoff:
+     from_agent: "{current}"
+     to_agent: "{new}"
+     story_context:
+       story_id: "{id}"
+       story_status: "{status}"
+       current_task: "{task}"
+       branch: "{branch}"
+     decisions: [max 5]
+     files_modified: [max 10]
+     blockers: [max 3]
+     next_action: "{suggested command}"
+   ```
+
+2. **Incoming** receives: full persona + compact handoff (~379 tokens)
+3. **Savings:** ~33% per switch, ~57% after 2 switches
+4. **Storage:** `.aiox/handoffs/handoff-{from}-to-{to}-{timestamp}.yaml`
+5. **Retention:** Max 3 artifacts (oldest discarded on 4th)
+
+---
+
+## Squads Reference
+
+### AIOX Core Squad
+11 agents for full-stack development. Activate: `/AIOX:agents:{name}`
+
+### AFS (AIOX Forge Squad)
+Framework evolution. 7 agents. Activate: `/SQUADS:afs:{name}`
+- **aios-catalyst (Nova):** Performance optimization, token reduction
+- **aios-nexus:** Integration and connection
+- **aios-architect (Athena):** Framework architecture
+- **aios-oracle:** Coordination and routing
+- **aios-sentinel (Vigil):** Quality validation
+- **aios-forge (Vulcan):** Component creation
+- **aios-scout:** Discovery and research
+
+### Ultimate Landing Page Squad
+Landing page creation. 9 agents. Activate: `/SQUADS:ultimate-lp:{name}`
+
+### BrandCraft Squad
+Branding and identity. 8 agents. Activate: `/SQUADS:brandcraft:{name}`
+
+### NSC (Nirvana Squad Creator)
+Meta-squad for creating new squads. 9 agents. Activate: `/SQUADS:nsc:{name}`
+
+---
+
+## CLI Commands
+
+```bash
+aios doctor              # Full health diagnostic + governance checks
+aios graph --deps        # Dependency tree (ASCII/JSON/HTML/Mermaid/DOT)
+aios graph --stats       # Entity statistics and cache metrics
+aios graph --watch       # Live reload mode
+```
+
+## Configuration
+
+| File | Purpose |
+|------|---------|
+| `core-config.yaml` | Framework config, boundary protection toggle |
+| `.claude/settings.json` | IDE-level deny/allow rules |
+| `.env` | Environment variables |
+| `aios.config.js` | Project-specific settings |

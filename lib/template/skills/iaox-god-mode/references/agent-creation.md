@@ -1,82 +1,351 @@
-# Agent Creation — Schema & Protocol
+# Agent Creation Guide — Complete Schema & Template
 
-Use this when intent = CREATE and the component is an **agent**.
+## Naming Conventions
 
-## Elicit (one focused round)
+| Context | Pattern | Example |
+|---------|---------|---------|
+| Core agent ID | `{role}` (kebab-case) | `dev`, `qa`, `data-engineer` |
+| Squad agent ID | `{prefix}-{role}` | `bc-renderer`, `nsc-analyzer` |
+| File name | `{agent-id}.md` | `dev.md`, `bc-renderer.md` |
+| Persona name | Single word, capitalized | `Dex`, `Quinn`, `Forge` |
 
-- **name** — kebab-case id (e.g. `growth-analyst`)
-- **persona** — a human name + one-line character (e.g. "Nova — data-driven growth strategist")
-- **role** — the agent's domain and primary responsibility
-- **commands** — the `*` commands it exposes
-- **dependencies** — tasks/templates/checklists it relies on
+## Where to Save
 
-Assume sensible defaults for anything not provided. Do not invent scope beyond
-what the user asked for (No Invention).
+| Type | Agent Definition | Command File |
+|------|-----------------|--------------|
+| **Core** | `.aiox-core/development/agents/{id}.md` | `.claude/commands/AIOX/agents/{id}.md` |
+| **Squad** | `squads/{squad}/agents/{id}.md` | `.claude/commands/SQUADS/{squad}/{id}.md` |
 
-## YAML frontmatter schema
+Additionally for squads: register in `.claude/squads/{squad}/agents/{id}.md`
+
+## Complete YAML Schema
+
+```yaml
+# ─── LOADER CONFIGURATION ───
+# These sections enable Claude Code to resolve files and commands
+
+ACTIVATION-NOTICE: >
+  This file contains your full agent operating guidelines.
+  Read the ENTIRE file and follow activation-instructions.
+
+IDE-FILE-RESOLUTION:
+  - Dependencies map to .aiox-core/development/{type}/{name}
+  - type = tasks|templates|checklists|data|utils
+  - Example: create-doc.md → .aiox-core/development/tasks/create-doc.md
+  - IMPORTANT: Only load when user requests specific command execution
+
+REQUEST-RESOLUTION: >
+  Match user requests to commands flexibly.
+  Example: "write tests" → *run-tests, "check quality" → *review
+
+activation-instructions:
+  - "STEP 1: Read THIS ENTIRE FILE"
+  - "STEP 2: Adopt persona from 'agent' and 'persona' sections"
+  - "STEP 3: Assemble greeting (zero JS execution):"
+  - "  0. GREENFIELD GUARD: Check if git repo exists"
+  - "  1. Show: '{icon} {greeting_levels.archetypal}'"
+  - "  2. Show: '**Role:** {persona.role}'"
+  - "  3. Show: '📊 **Project Status:**'"
+  - "  4. Show: '**Available Commands:**'"
+  - "  5. Show: 'Type `*guide` for comprehensive usage instructions.'"
+  - "  5.5. Check `.aiox/handoffs/` for unconsumed handoff artifact"
+  - "  6. Show: '{persona_profile.communication.signature_closing}'"
+  - "STEP 4: Display greeting"
+  - "STEP 5: HALT and await user input"
+
+# ─── AGENT IDENTITY ───
+
+agent:
+  name: "{PersonaName}"              # REQUIRED — Single word, capitalized
+  id: "{agent-id}"                   # REQUIRED — kebab-case
+  title: "{Job Title}"               # REQUIRED — Human-readable title
+  icon: "{emoji}"                    # REQUIRED — Single emoji
+  whenToUse: "{description}"         # REQUIRED — When to activate this agent
+  customization: null                # OPTIONAL — Custom behavior overrides
+
+# ─── PERSONA PROFILE ───
+
+persona_profile:
+  archetype: "{Archetype}"           # e.g., Builder, Guardian, Strategist
+  zodiac: "{zodiac_sign}"           # OPTIONAL — Flavor only
+
+  communication:
+    tone: "{tone}"                   # e.g., pragmatic, analytical, strategic
+    emoji_frequency: "{low|medium|high}"
+
+    vocabulary:                      # Portuguese terms the agent uses
+      - "{termo_1}"
+      - "{termo_2}"
+
+    greeting_levels:
+      minimal: "{icon} {id} Agent ready"
+      named: "{icon} {Name} ({Archetype}) ready."
+      archetypal: "{icon} {Name} ({Archetype}) — {title}. {tagline}"
+
+    signature_closing: "{closing_message}"
+
+# ─── PERSONA (BEHAVIORAL) ───
+
+persona:
+  role: "{expert role description}"
+  style: "{communication style}"
+  identity: "{self-identity}"
+  focus: "{focus areas}"
+  core_principles:
+    - "CRITICAL: {principle_1}"
+    - "CRITICAL: {principle_2}"
+    - "{principle_3}"
+
+# ─── STORY FILE PERMISSIONS ─── (OPTIONAL — only for agents that edit stories)
+
+story-file-permissions:
+  - "CRITICAL: Only update {specific sections}"
+
+# ─── COMMANDS ───
+# All commands require * prefix (e.g., *help)
+
+commands:
+  - name: "{command-name}"
+    visibility: [full, quick, key]   # full=*guide, quick=*help, key=highlighted
+    args: "{optional_args_spec}"     # e.g., "{story-id}"
+    description: "{description}"
+    task: "{task-file.md}"           # OPTIONAL — maps to dependency
+
+  # Universal commands (include in all agents):
+  - name: help
+    visibility: [full, quick]
+    description: "List all commands"
+  - name: guide
+    visibility: [full]
+    description: "Comprehensive usage guide"
+  - name: session-info
+    visibility: [full]
+    description: "Current context info"
+  - name: exit
+    visibility: [full, quick]
+    description: "Exit agent mode"
+
+# ─── DEPENDENCIES ───
+
+dependencies:
+  checklists:
+    - "{checklist-file.md}"
+  tasks:
+    - "{task-file.md}"
+  scripts:
+    - "{script-file.js}"
+  templates:
+    - "{template-file.yaml}"
+  tools:
+    - "{tool_name}"
+
+  # OPTIONAL: Git restrictions (for agents with git access)
+  git_restrictions:
+    allowed_operations:
+      - git add
+      - git commit
+      - git status
+      - git diff
+      - git log
+      - git branch
+      - git checkout
+    blocked_operations:
+      - git push            # → delegate to @devops
+      - gh pr create        # → delegate to @devops
+
+  # OPTIONAL: CodeRabbit integration
+  coderabbit_integration:
+    enabled: true
+    self_healing:
+      enabled: true
+      type: light            # light or full
+      max_iterations: 2
+      severity_filter: [CRITICAL]
+      behavior:
+        CRITICAL: auto_fix
+        HIGH: document_only
+        MEDIUM: ignore
+        LOW: ignore
+
+# ─── AUTONOMOUS EXECUTION ───
+
+autoClaude:
+  version: '3.0'
+  execution:
+    canCreatePlan: true
+    canCreateContext: true
+    canExecute: true
+    canVerify: true
+  recovery:
+    canTrack: true
+    canRollback: true
+  memory:
+    canCaptureInsights: true
+```
+
+## Minimal Template (Copy & Fill)
+
+```yaml
+agent:
+  name: "{Name}"
+  id: "{agent-id}"
+  title: "{Title}"
+  icon: "{emoji}"
+  whenToUse: "{when to activate}"
+
+persona_profile:
+  archetype: "{Archetype}"
+  communication:
+    tone: "{tone}"
+    emoji_frequency: low
+    greeting_levels:
+      minimal: "{icon} {id} Agent ready"
+      named: "{icon} {Name} ({Archetype}) ready."
+      archetypal: "{icon} {Name} ({Archetype}) — {title}."
+    signature_closing: "{closing}"
+
+persona:
+  role: "{role}"
+  style: "{style}"
+  identity: "{identity}"
+  focus: "{focus}"
+  core_principles:
+    - "CRITICAL: {principle_1}"
+    - "{principle_2}"
+
+commands:
+  - name: help
+    visibility: [full, quick]
+    description: "List all commands"
+  - name: "{main-command}"
+    visibility: [full, quick, key]
+    description: "{description}"
+    task: "{task-file.md}"
+  - name: exit
+    visibility: [full, quick]
+    description: "Exit agent mode"
+
+dependencies:
+  tasks:
+    - "{task-file.md}"
+  checklists: []
+  scripts: []
+  templates: []
+  tools: []
+
+autoClaude:
+  version: '3.0'
+  execution:
+    canCreatePlan: true
+    canExecute: true
+    canVerify: true
+```
+
+## Squad Agent Template (Simplified)
+
+For squad agents, use this simplified format in both `squads/{squad}/agents/` and `.claude/commands/SQUADS/{squad}/`:
 
 ```yaml
 ---
-name: { name }
-persona: { Human Name }
-role: { one-line role }
-icon: { emoji }
-whenToUse: { trigger conditions }
+agent:
+  name: "{Name}"
+  id: "{prefix}-{role}"
+  title: "{Title}"
+  icon: "{emoji}"
+  whenToUse: "{description}"
+
+persona_profile:
+  archetype: "{Archetype}"
+  communication:
+    tone: "{tone}"
+
+greeting_levels:
+  minimal: "{icon} {id} Agent ready"
+  named: "{icon} {Name} ({Archetype}) ready."
+  archetypal: "{icon} {Name} ({Archetype}) — {title}."
+
+persona:
+  role: "{role}"
+  style: "{style}"
+  identity: "{identity}"
+  focus: "{focus}"
+  core_principles:
+    - "{principle}"
+  responsibility_boundaries:
+    - "Handles: {responsibilities}"
+    - "Delegates: {delegation targets}"
+
 commands:
-  - "*help": Show available commands
-  - "*{command}": { description }
+  - name: "*{command}"
+    visibility: squad
+    description: "{description}"
+    args:
+      - name: "{arg}"
+        description: "{description}"
+        required: true
+    task: "{task-file.md}"
+
 dependencies:
   tasks:
-    - { task-file }.md
-  templates:
-    - { template-file }.md
-  checklists:
-    - { checklist-file }.md
-authority:
-  owns:
-    - { exclusive operation }
-  delegatesTo:
-    - { agent }: { what }
-  blocked:
-    - { operation reserved to another agent }
+    - "{task-file.md}"
+  scripts: []
+  templates: []
+  checklists: []
+  data: []
+  tools: []
 ---
+
+# Quick Commands
+
+| Command | Descrição | Exemplo |
+|---------|-----------|---------|
+| `*{command}` | {Description} | `*{command} {arg}` |
+
+# Agent Collaboration
+
+## Receives From
+- **{Source Agent}**: {Input description}
+
+## Hands Off To
+- **{Target Agent}**: {Output description}
+
+## Shared Artifacts
+- `{artifact}` — {Description}
 ```
 
-## Body structure
+## Registration Steps
 
-```markdown
-# {Persona} — {Role}
+### Core Agent
+1. Save agent definition to `.aiox-core/development/agents/{id}.md`
+2. Copy to `.claude/commands/AIOX/agents/{id}.md`
+3. Add entry to `.aiox-core/data/entity-registry.yaml`
+4. Update agent count in documentation
 
-## Persona
-{2–3 sentences: voice, expertise, how it makes decisions.}
+### Squad Agent
+1. Save agent definition to `squads/{squad}/agents/{id}.md`
+2. Copy to `.claude/commands/SQUADS/{squad}/{id}.md`
+3. Create `.claude/squads/{squad}/agents/{id}.md`
+4. Update `squads/{squad}/squad.yaml` → `components.agents` array
 
-## Responsibilities
-- {bullet}
+## Validation Checklist (18 Points)
 
-## Commands
-{table of * commands with descriptions}
-
-## Workflow
-{how this agent typically operates, step by step}
-
-## Boundaries
-- Owns: {...}
-- Delegates: {...}
-- Blocked: {git push, PRs → @devops}
-```
-
-## Save & register
-
-1. Save to `.aiox-core/development/agents/{name}.md`
-   (or `squads/{squad}/agents/{name}.md` for squad agents).
-2. Add a command entry under `.claude/commands/IAOX/agents/` so `@name` resolves.
-3. Update any entity registry / data file that lists agents.
-
-## Validation checklist
-
-- [ ] name is unique and kebab-case
-- [ ] persona has a name and clear voice
-- [ ] commands include `*help` and `*exit`
-- [ ] authority block doesn't claim another agent's exclusive operation
-- [ ] no invented responsibilities beyond the stated purpose
-- [ ] absolute paths / imports where applicable
+| # | Check | Blocking |
+|---|-------|----------|
+| 1 | File is valid Markdown with YAML block | YES |
+| 2 | `agent.name` present (single word, capitalized) | YES |
+| 3 | `agent.id` present (kebab-case) | YES |
+| 4 | `agent.title` present | YES |
+| 5 | `agent.icon` present (single emoji) | YES |
+| 6 | `agent.whenToUse` present | YES |
+| 7 | `persona_profile.archetype` present | YES |
+| 8 | `persona_profile.communication.tone` present | YES |
+| 9 | All 3 `greeting_levels` present | YES |
+| 10 | `persona.role` present | YES |
+| 11 | `persona.core_principles` has ≥1 CRITICAL | YES |
+| 12 | `commands` array has ≥1 command + `help` + `exit` | YES |
+| 13 | `dependencies` section present | YES |
+| 14 | No placeholder text remaining (`{...}`) | YES |
+| 15 | UTF-8 encoding | YES |
+| 16 | File saved to correct path | YES |
+| 17 | Command file created in `.claude/commands/` | Advisory |
+| 18 | Entity registry updated (core agents only) | Advisory |
